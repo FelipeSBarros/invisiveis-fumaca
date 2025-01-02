@@ -82,7 +82,13 @@ def combine_datasets():
     # 17. Concatenar todos os datasets processados ao longo da nova dimensão 'Brasilia_reference_time'
     logging.warning("Concatenating datasets.")
     ds = xr.concat(processed_datasets, dim="Brasilia_reference_time")
-
+    ds.Brasilia_reference_time.attrs["timezone"] = "America/Sao_Paulo"
+    # limita os dados até o mes de dezembro de 2024
+    ds = ds.where(
+        (ds["Brasilia_reference_time"] >= np.datetime64("2024-07-01T00:00:00.000000000")) &
+        (ds["Brasilia_reference_time"] <= np.datetime64("2024-12-31T23:59:59.999999999")),
+        drop=True
+    )
     # 18. Converter os valores de 'pm2p5' de unidades para 'ug/m³'
     logging.warning("Converting pm2p5 units.")
     ds["pm2p5"] = (
