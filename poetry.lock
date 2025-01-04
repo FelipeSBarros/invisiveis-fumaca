@@ -532,6 +532,42 @@ typing-extensions = "*"
 legacy = ["cdsapi"]
 
 [[package]]
+name = "exactextract"
+version = "0.2.0"
+description = "Fast and accurate raster zonal statistics"
+category = "main"
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "exactextract-0.2.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:ac116486d9f63431466e0a6ca1158a8b56e3c83c69d89c90344d1c0a8556e8a5"},
+    {file = "exactextract-0.2.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:bafba5e31c46d421085c8550b0ad54baf2ace48141a9b61ae4f19f35119ac9a0"},
+    {file = "exactextract-0.2.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9460990cb7d87a258093b92d3e4e7fb14fa7fdad508009e97646f17a23a286f9"},
+    {file = "exactextract-0.2.0-cp310-cp310-win32.whl", hash = "sha256:b554fab820ccf38d6f7b2f66d437c5f8ff74a43e6462d408ba9f7bbcc3afeadb"},
+    {file = "exactextract-0.2.0-cp310-cp310-win_amd64.whl", hash = "sha256:e28fc1e194084643dbf7ebb3e279ae962af88dea9919c601dc707ce4b3d19724"},
+    {file = "exactextract-0.2.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:818b4f9b6fd80372954603f25d5e87733cbd4f1aa6958a6847bb97260a5ba215"},
+    {file = "exactextract-0.2.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:a0abee41395293593a2ff12038e62c355677d9166a61586ed5f1f93ca467c122"},
+    {file = "exactextract-0.2.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:21b9c444fdaaea925198e4df574c226dda2572144b5f44d78529c23687174ba0"},
+    {file = "exactextract-0.2.0-cp311-cp311-win32.whl", hash = "sha256:4015a6673d21f09dcc69eea2a611cd0aa86366f8b1d4d0064f54b72576323e6b"},
+    {file = "exactextract-0.2.0-cp311-cp311-win_amd64.whl", hash = "sha256:7af83879c9af80c90faca8d11d83e43326915b485160a1c7a10a7b535f568359"},
+    {file = "exactextract-0.2.0-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:1eb5480c4b56086b3aab295ec4255912f16e8b671c5b6e75c515a2669b76c872"},
+    {file = "exactextract-0.2.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:e2cc8831a1e3c215097fe29cf093e82bb16ebc8293988e38330c5b9396be6d7f"},
+    {file = "exactextract-0.2.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f66e6b4ee4846b15647a77e4ed8d4efa81161686a7dd243eb7a848fc416d5266"},
+    {file = "exactextract-0.2.0-cp312-cp312-win32.whl", hash = "sha256:7f7384ddd3ac7e8aa81d66db61a97746860ff380e5cf496df889afddd2b959d3"},
+    {file = "exactextract-0.2.0-cp312-cp312-win_amd64.whl", hash = "sha256:7f1dea7545cb82cd1bd47b5e93de8a9f2baedd88c95a9d1fd0a24d5387ed8809"},
+    {file = "exactextract-0.2.0-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:7bd2dfd6f923797fa4908ca82a50ed603d95245f7f42339a6e4d094a58861793"},
+    {file = "exactextract-0.2.0-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:652b34c69c46a6ebcd42f0daa6e36a64008198db6f0f19adb2fd4e58f7dece8c"},
+    {file = "exactextract-0.2.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:56b09fef5d68d7f713c50d518404e62d93886d0aacdc920054ad29b6a7666de1"},
+    {file = "exactextract-0.2.0-cp313-cp313-win32.whl", hash = "sha256:c6d9821c3c72d5aa2231909faedc944ddbd4b16771c03cf03d84f24809740f39"},
+    {file = "exactextract-0.2.0-cp313-cp313-win_amd64.whl", hash = "sha256:edd2c79ee71a4d9cb5dccbbebf838f8dfda3d2c68a6b7b5960f01f3c37c98894"},
+    {file = "exactextract-0.2.0-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:dd2952509354a824afcf61064032f2d041cd7af69d569c9b901baf5ac4eba535"},
+    {file = "exactextract-0.2.0-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:b7221ccc33883a7b27866f0eb99bf17fe74104495e83603d32b7d915ec16a948"},
+    {file = "exactextract-0.2.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:21bc3ddc3cacae908a6b1d42a04fe6a9dc34c65be05c6f1569dec933f91b3436"},
+    {file = "exactextract-0.2.0-cp39-cp39-win32.whl", hash = "sha256:50d914ceb1b89d43ae1b36f6d9cc2ead6cd685893c1969c51afec745844370a5"},
+    {file = "exactextract-0.2.0-cp39-cp39-win_amd64.whl", hash = "sha256:b23a584ca9827dce34296799f461667cece77bb321bd25684673bdf952781354"},
+    {file = "exactextract-0.2.0.tar.gz", hash = "sha256:776b5619a1642f674e8575cee9d5b8dfa756d9b4a81a73c2749773557a3d4871"},
+]
+
+[[package]]
 name = "fonttools"
 version = "4.55.3"
 description = "Tools to manipulate font files"
@@ -2256,4 +2292,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "428777af65613a011b0c16195f5098c3d38b2766d90ff7d0e465fb913786b59b"
+content-hash = "81d7b57f18d387b1819da3d0e1826424b7962bd5e4b5a97a62a76aea5160b53b"

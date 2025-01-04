@@ -1,39 +1,66 @@
+# Importando bibliotecas necessárias
 import xvec
 import geopandas as gpd
 import xarray as xr
 
-#laoding xarray dataset
-ds = xr.load_dataset("./Data/Processed/CAMS_AMZ_combined.nc")
-# Calculating yearly mean of pm2p5
+# Carregando o dataset XArray
+# Usei `open_dataset` em vez de `load_dataset`, pois o último carrega tudo na memória.
+ds = xr.open_dataset("./Data/Processed/CAMS_AMZ_combined.nc")
+
+# Calculando a média anual do PM2.5
+# A função `groupby` organiza os dados por ano e `mean` calcula a média.
 yearly_mean = ds.groupby("Brasilia_reference_time.year").mean()
-# yearly_mean = yearly_mean.rio.write_crs("EPSG:4326")
-# Loading cities limit Amazonia legal
+
+# Calculando a média mensal do PM2.5 e salvando o resultado
+monthly_mean = ds.groupby("Brasilia_reference_time.month").mean()
+monthly_mean.to_netcdf("./Data/Processed/CAMS_AMZ_monthly_mean.nc")
+
+# Carregando os limites dos municípios da Amazônia Legal
 municipios = gpd.read_file("./Data/Raw/IBGE/Mun_Amazonia_Legal_2022.shp")
 
-estats_mensual = yearly_mean.pm2p5.xvec.zonal_stats(
+# Convertendo o sistema de referência para EPSG:4326
+municipios.to_crs(epsg=4326, inplace=True)
+
+# Calculando estatísticas zonais para a média mensal
+# O método `exactextract` garante precisão ao cruzar o raster com as geometrias.
+estats_mensual = monthly_mean.xvec.zonal_stats(
     municipios.geometry,
     x_coords="longitude",
     y_coords="latitude",
-    nodata=-9999
+    method="exactextract",
 )
 
-# municipios["geometry"] = municipios.geometry.simplify(tolerance=0.0001)  # Ajuste a tolerância conforme necessário.
-# municipios = municipios.buffer(1e-7)
+# Convertendo os resultados das estatísticas zonais para um GeoDataFrame
+df_ = estats_mensual.xvec.to_geodataframe(name="pm2p5").reset_index()
 
+# Adicionando um ID único para cada município por mês
+df_["id"] = df_.groupby("month").cumcount()
 
-print(yearly_mean.isnull().any())
-print(municipios.geometry.isna().any())
+# Removendo a coluna de geometria, já que não será usada na transformação para formato "wide"
+df_ = df_.drop(columns=["geometry"])
 
-import rasterio.features
+# Transformando o DataFrame para formato "wide" (colunas por mês)
+df_wide = df_.pivot(columns="month", index="id", values="pm2p5")
 
-# Rasterize as geometrias
-transform = yearly_mean.rio.transform()  # Obtenha a transformação
-out_shape = yearly_mean.rio.shape  # Forma do raster
+# Renomeando as colunas para os meses correspondentes
+df_wide.columns = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+]
 
-rasterized = rasterio.features.rasterize(
-    [(geom, 1) for geom in municipios.geometry.values],
-    out_shape=out_shape,
-    transform=transform,
-    fill=0,
-    dtype="int32"  # Certifique-se de especificar o tipo de dado correto
-)
+# Fazendo o join com os limites dos municípios
+# A opção `inner` garante que apenas os municípios com dados sejam mantidos.
+merged_df = municipios.join(df_wide, how="inner")
+
+# Exibindo o DataFrame final para verificar os resultados
+merged_df.to_file("./Data/Processed/results.gpkg", layer='Municipios_PM2.5_Mensal', driver="GPKG")
