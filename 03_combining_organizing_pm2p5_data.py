@@ -4,6 +4,7 @@ import pandas as pd  # Importa pandas para manipulação de datas e tempos
 import numpy as np  # Importa numpy para operações numéricas
 import logging  # Para registrar logs de execução
 
+
 def combine_datasets():
     # 1. Obtenha a lista de arquivos NetCDF presentes em um diretório e subdiretórios.
     datasets = glob("./Data/Raw/CAMS_AMZ/unzipped/*/*.nc")
@@ -25,7 +26,9 @@ def combine_datasets():
 
         # 5. Converter a variável 'forecast_period' para timedelta
         # 'forecast_period' é o tempo relativo da previsão, que é em horas. Vamos convertê-lo para o formato timedelta.
-        forecast_period_timedelta = pd.to_timedelta(ds["forecast_period"].values, unit="h")
+        forecast_period_timedelta = pd.to_timedelta(
+            ds["forecast_period"].values, unit="h"
+        )
 
         # 6. Garantir que ambas as variáveis sejam numpy arrays para facilitar as operações numéricas
         forecast_reference_time_numpy = forecast_reference_time_pandas.values
@@ -64,7 +67,9 @@ def combine_datasets():
         ds = ds.stack({"flat_time": ("forecast_reference_time", "forecast_period")})
 
         # 13. Adicionar a nova coordenada 'Brasilia_reference_time' associada à nova dimensão 'flat_time'
-        ds = ds.assign_coords({"Brasilia_reference_time": ("flat_time", combined_times_1d)})
+        ds = ds.assign_coords(
+            {"Brasilia_reference_time": ("flat_time", combined_times_1d)}
+        )
 
         # 14. Substituir a dimensão antiga 'flat_time' pela nova dimensão 'Brasilia_reference_time'
         ds = ds.swap_dims({"flat_time": "Brasilia_reference_time"})
@@ -74,6 +79,9 @@ def combine_datasets():
         ds = ds.drop_vars(
             ["forecast_reference_time", "forecast_period", "valid_time", "flat_time"]
         )
+
+        # 16. Transpor as dimensões para que 'longitude' e 'latitude' sejam as primeiras dimensões
+        ds = ds.transpose("longitude", "latitude", "Brasilia_reference_time")
 
         # 16. Adicionar o dataset processado à lista de datasets
         logging.warning(f"Processed dataset")
@@ -85,9 +93,15 @@ def combine_datasets():
     ds.Brasilia_reference_time.attrs["timezone"] = "America/Sao_Paulo"
     # limita os dados até o mes de dezembro de 2024
     ds = ds.where(
-        (ds["Brasilia_reference_time"] >= np.datetime64("2024-07-01T00:00:00.000000000")) &
-        (ds["Brasilia_reference_time"] <= np.datetime64("2024-12-31T23:59:59.999999999")),
-        drop=True
+        (
+            ds["Brasilia_reference_time"]
+            >= np.datetime64("2024-07-01T00:00:00.000000000")
+        )
+        & (
+            ds["Brasilia_reference_time"]
+            <= np.datetime64("2024-12-31T23:59:59.999999999")
+        ),
+        drop=True,
     )
     # 18. Converter os valores de 'pm2p5' de unidades para 'ug/m³'
     logging.warning("Converting pm2p5 units.")
@@ -101,6 +115,7 @@ def combine_datasets():
     # 20. Salvar o dataset final em um novo arquivo NetCDF
     logging.warning("Saving combined dataset.")
     ds.to_netcdf("./Data/Processed/CAMS_AMZ_combined.nc")
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.WARNING)
