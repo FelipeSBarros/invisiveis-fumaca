@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "invisiveis-fumaca"
+version = "0.1.0"
+description = ""
+authors = ["Felipe Sodré <felipe.b4rros@gmail.com>"]
+readme = "README.md"
+packages = [{include = "invisiveis_fumaca"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+cdsapi = "^0.7.5"
+rioxarray = "^0.18.1"
+netcdf4 = "^1.7.2"
+dask = "^2024.12.1"
+matplotlib = "^3.10.0"
+seaborn = "^0.13.2"
+geobr = "^0.2.2"
+geoplot = "^0.5.1"
+xvec = "^0.3.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
