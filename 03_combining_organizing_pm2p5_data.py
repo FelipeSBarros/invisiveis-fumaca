@@ -82,6 +82,7 @@ def combine_datasets():
 
         # 16. Transpor as dimensões para que 'longitude' e 'latitude' sejam as primeiras dimensões
         ds = ds.transpose("longitude", "latitude", "Brasilia_reference_time")
+        ds = ds.rio.write_crs("EPSG:4326")
 
         # 16. Adicionar o dataset processado à lista de datasets
         logging.warning(f"Processed dataset")
