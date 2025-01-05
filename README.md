@@ -4,12 +4,6 @@ Repositório criado para gestionar os scripts usados no projeto "Invisíveis da 
 
 # Aquisição dos dados
 
-## Focos de calor
-
-Os dados de focos de calor foram baixados do [INPE](https://terrabrasilis.dpi.inpe.br/queimadas/bdqueimadas), dos satélites NPP-375 para a Amazônia Legal, considerando a janela temporal do projeto (01/07/2024 a 31/12/2024).
-
-O arquivo baixado foi o [`focos_qmd_inpe_2024-07-01_2024-12-31_01.405022.geojson`](Data/Raw/NPP-375/focos_qmd_inpe_2024-07-01_2024-12-31_10.005470.geojson).
-
 ## Particulado fino
 
 Os dados foram obtidos do Copernicus Atmosphere Monitoring Service (CAMS).
@@ -20,6 +14,16 @@ Para poder usar a [API](https://ads.atmosphere.copernicus.eu/how-to-api), é nec
 
 * Caso esteja interessado em aprender a manipular tais dados, veja a lista de [tutoriais](https://ecmwf-projects.github.io/copernicus-training-cams/intro.html) deles.
 
-# Malha de setores censitários 2022
-A malha espaciald e setores censitários foram obtidos do site do [IBGE](https://www.ibge.gov.br/estatisticas/downloads-estatisticas.html).
-Os dados de municípios foram adquiridos [nesta página do IBGE](https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15819-amazonia-legal.html)
+## Focos de calor
+
+Os dados de focos de calor foram baixados do [INPE](https://terrabrasilis.dpi.inpe.br/queimadas/bdqueimadas), dos satélites NPP-375 para a Amazônia Legal, considerando a janela temporal do projeto (01/07/2024 a 31/12/2024).
+
+## Municípios e  setores censitários 2022
+
+Os dados de [municípios](https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15819-amazonia-legal.html) e [setores censitários](https://www.ibge.gov.br/estatisticas/downloads-estatisticas.html) foram adquiridos do IBGE. Em abmso os casos, considerou-se apenas aqueles que fazem parte da Amazônia Legal.
+
+## Terras Indigenas
+
+Os dados das Terras Indígenas foram baixados do [INCRA](https://www.gov.br/funai/pt-br/atuacao/terras-indigenas/geoprocessamento-e-mapas).
+
+> Ambos dados estão disponíveis no `geopackage` Limites_Territoriais_AmazoniaLegal.
