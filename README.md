@@ -4,7 +4,7 @@ Repositório criado para gestionar os scripts usados no projeto "Invisíveis da 
 
 # Aquisição dos dados
 
-## Particulado fino
+## Particulado fino (PM2.5 ou pm2p5)
 
 Os dados foram obtidos do Copernicus Atmosphere Monitoring Service (CAMS).
 Do conjunto de dados [_global atmospheric composition forecasts_](https://ads.atmosphere.copernicus.eu/datasets/cams-global-atmospheric-composition-forecasts) (veja mais informações na [documentação](https://confluence.ecmwf.int/display/CKB/CAMS%3A+Global+atmospheric+composition+forecast+data+documentation) ), foi baixada a variável _Particulate matter d < 2.5 µm (PM2.5)_ (`"cams-global-atmospheric-composition-forecasts"`), usando o script [`01_downloading_pm2p5_data.py`](01_downloading_pm2p5_data.py).
@@ -27,3 +27,12 @@ Os dados de [municípios](https://www.ibge.gov.br/geociencias/cartas-e-mapas/map
 Os dados das Terras Indígenas foram baixados do [INCRA](https://www.gov.br/funai/pt-br/atuacao/terras-indigenas/geoprocessamento-e-mapas).
 
 > Ambos dados estão disponíveis no `geopackage` Limites_Territoriais_AmazoniaLegal.
+
+# Processamento dos dados
+
+Para cada fase de processamento dos dados, foi criado um script Python. A seguir, a descrição de cada um deles:
+
+1. [`01_downloading_pm2p5_data.py`](01_downloading_pm2p5_data.py), baixamos os dados de PM2.5 do CAMS.
+2. [`02_unzip_pm2p5_data.py`](02_unzip_pm2p5_data.py) descompacta os arquivos baixados.
+3. [`03_combine_pm2p5_data.py`](03_combine_pm2p5_data.py) combina, organiza e padroniza os dados de pm2p5 descompactados em um único arquivo `NetCDF`.
+4. [`04_extract_pm2p5_data.py`](04_extract_pm2p5_data.py) extrai os dados de PM2.5 mensais e de toda a temporada para cada teritório a ser considerado: município, setor censitário e terras indígenas da Amazônia Legal.
