@@ -117,6 +117,23 @@ def combine_datasets():
     logging.warning("Saving combined dataset.")
     ds.to_netcdf("./Data/Processed/CAMS_AMZ_combined.nc")
 
+    # 21. Calculando a média de PM2.5 para toda a temporada
+    logging.warning("Calculating season mean.")
+    # A função `groupby` organiza os dados por ano e `mean` calcula a média.
+    season_mean = ds.groupby("Brasilia_reference_time.year").mean()
+    season_mean.to_netcdf("./Data/Processed/season_mean_pm2p5.nc")
+    # export season_mean as tif
+    season_mean = season_mean.pm2p5.transpose("year", "latitude", "longitude")
+    season_mean.rio.to_raster("./Data/Processed/season_mean_pm2p5.tif")
+
+    # 22. Calculando a média mensal do PM2.5 e salvando o resultado
+    logging.warning("Calculating monthly mean.")
+    monthly_mean = ds.groupby("Brasilia_reference_time.month").mean()
+    monthly_mean.to_netcdf("./Data/Processed/monthly_mean_pm2p5.nc")
+    # export monthly_mean as tif
+    monthly_mean = monthly_mean.pm2p5.transpose("month", "latitude", "longitude")
+    monthly_mean.rio.to_raster("./Data/Processed/monthly_mean_pm2p5.tif")
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.WARNING)

@@ -4,15 +4,11 @@ import logging
 import geopandas as gpd
 import xarray as xr
 
-# Carregando o dataset XArray com os dados de PM2.5
-ds = xr.open_dataset("./Data/Processed/CAMS_AMZ_combined.nc")
+# Carregando o dataset xarray com os dados médios de PM2.5 para toda a temporada
+season_mean = xr.open_dataset("./Data/Processed/season_mean_pm2p5.nc")
 
-# Calculando a média de PM2.5 para toda a temporada
-# A função `groupby` organiza os dados por ano e `mean` calcula a média.
-season_mean = ds.groupby("Brasilia_reference_time.year").mean()
-
-# Calculando a média mensal do PM2.5 e salvando o resultado
-monthly_mean = ds.groupby("Brasilia_reference_time.month").mean()
+# Carregando o dataset xarray com os dados médios mensais de PM2.5
+monthly_mean = xr.open_dataset("./Data/Processed/monthly_mean_pm2p5.nc")
 
 
 def extract_values(gpkg_path, territory_layer_name, output_path):
