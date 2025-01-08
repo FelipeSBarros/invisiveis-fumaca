@@ -3,6 +3,7 @@ from glob import glob  # Importa glob para buscar arquivos no sistema
 import pandas as pd  # Importa pandas para manipulação de datas e tempos
 import numpy as np  # Importa numpy para operações numéricas
 import logging  # Para registrar logs de execução
+from pathlib import Path  # Para manipulação de caminhos de arquivos
 
 
 def combine_datasets():
@@ -118,21 +119,50 @@ def combine_datasets():
     ds.to_netcdf("./Data/Processed/CAMS_AMZ_combined.nc")
 
     # 21. Calculando a média de PM2.5 para toda a temporada
-    logging.warning("Calculating season mean.")
     # A função `groupby` organiza os dados por ano e `mean` calcula a média.
-    season_mean = ds.groupby("Brasilia_reference_time.year").mean()
-    season_mean.to_netcdf("./Data/Processed/season_mean_pm2p5.nc")
-    # export season_mean as tif
-    season_mean = season_mean.pm2p5.transpose("year", "latitude", "longitude")
-    season_mean.rio.to_raster("./Data/Processed/season_mean_pm2p5.tif")
+    if not Path("./Data/Processed/season_mean_pm2p5.nc").exists():
+        logging.warning("Calculating season mean.")
+        season_mean = ds.groupby("Brasilia_reference_time.year").mean()
+        season_mean.to_netcdf("./Data/Processed/season_mean_pm2p5.nc")
+        logging.warning("Exporting monthly mean to tif.")
+        season_mean = season_mean.pm2p5.transpose("year", "latitude", "longitude")
+        season_mean.rio.to_raster("./Data/Processed/season_mean_pm2p5.tif")
 
     # 22. Calculando a média mensal do PM2.5 e salvando o resultado
-    logging.warning("Calculating monthly mean.")
-    monthly_mean = ds.groupby("Brasilia_reference_time.month").mean()
-    monthly_mean.to_netcdf("./Data/Processed/monthly_mean_pm2p5.nc")
-    # export monthly_mean as tif
-    monthly_mean = monthly_mean.pm2p5.transpose("month", "latitude", "longitude")
-    monthly_mean.rio.to_raster("./Data/Processed/monthly_mean_pm2p5.tif")
+    if not Path("./Data/Processed/monthly_mean_pm2p5.nc").exists():
+        logging.warning("Calculating monthly mean.")
+        monthly_mean = ds.groupby("Brasilia_reference_time.month").mean()
+        monthly_mean.to_netcdf("./Data/Processed/monthly_mean_pm2p5.nc")
+        logging.warning("Exporting monthly mean to tif.")
+        monthly_mean = monthly_mean.pm2p5.transpose("month", "latitude", "longitude")
+        monthly_mean.rio.to_raster("./Data/Processed/monthly_mean_pm2p5.tif")
+
+    # 23. Calculando a mediana para todo o periodo
+    if not Path("./Data/Processed/median_pm2p5.tif").exists():
+        logging.warning("Calculating median.")
+        median = ds.pm2p5.median(dim="Brasilia_reference_time")
+        # median.to_netcdf("./Data/Processed/median_pm2p5.nc")
+        logging.warning("Exporting median to tif.")
+        median = median.transpose("latitude", "longitude")
+        median.rio.to_raster("./Data/Processed/median_pm2p5.tif")
+
+    # 24. Calculando a quantidade de dias acima de 15 ug/m³
+    if not Path("./Data/Processed/days_above_15.tif").exists():
+        logging.warning("Calculating days above 15 ug/m³.")
+        days_above_15 = (ds["pm2p5"] > 15).groupby("Brasilia_reference_time.date").sum()
+        # days_above_15.to_netcdf("./Data/Processed/days_above_15.nc")
+        logging.warning("Exporting days above 15 to tif.")
+        days_above_15 = days_above_15.transpose("date", "latitude", "longitude")
+        days_above_15.rio.to_raster("./Data/Processed/days_above_15.tif")
+
+    # 25. Calculando o valor maximo de pm2p5 para todo o periodo
+    if not Path("./Data/Processed/max_pm2p5.tif").exists():
+        logging.warning("Calculating max pm2p5.")
+        max_pm2p5 = ds.pm2p5.max(dim="Brasilia_reference_time")
+        # max_pm2p5.to_netcdf("./Data/Processed/max_pm2p5.nc")
+        logging.warning("Exporting max pm2p5 to tif.")
+        max_pm2p5 = max_pm2p5.transpose("latitude", "longitude")
+        max_pm2p5.rio.to_raster("./Data/Processed/max_pm2p5.tif")
 
 
 if __name__ == "__main__":
