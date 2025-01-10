@@ -4,12 +4,18 @@ import pandas as pd  # Importa pandas para manipulação de datas e tempos
 import numpy as np  # Importa numpy para operações numéricas
 import logging  # Para registrar logs de execução
 from pathlib import Path  # Para manipulação de caminhos de arquivos
+import geopandas as gpd
 
 
 def combine_datasets():
     # 1. Obtenha a lista de arquivos NetCDF presentes em um diretório e subdiretórios.
     datasets = glob("./Data/Raw/CAMS_AMZ/unzipped/*/*.nc")
     logging.warning(f"Found {len(datasets)} datasets to process.")
+    # Carregar o limite da Amazonia Legal
+    legal_amz = gpd.read_file(
+        "./Data/Raw/IBGE/Limites_Territoriais_AmazoniaLegal.gpkg",
+        layer="Municipios_2022",
+    )
 
     # 2. Crie uma lista para armazenar os datasets processados
     processed_datasets = []
@@ -114,11 +120,16 @@ def combine_datasets():
     # 19. Atualizar os atributos do dataset para refletir as novas unidades
     ds.attrs["units"] = "ug/m3"
 
-    # 20. Salvar o dataset final em um novo arquivo NetCDF
+    # 20. Recortar o dataset para a Amazônia Legal
+    logging.warning("clipping to Legal Amazon Territory.")
+    ds = ds.rio.clip(legal_amz.geometry, legal_amz.crs, drop=True)
+
+    # 21. Salvar o dataset final em um novo arquivo NetCDF
     logging.warning("Saving combined dataset.")
     ds.to_netcdf("./Data/Processed/CAMS_AMZ_combined.nc")
+    # crop ds to legal_amz GeoDataFrame
 
-    # 21. Calculando a média de PM2.5 para toda a temporada
+    # 22. Calculando a média de PM2.5 para toda a temporada
     # A função `groupby` organiza os dados por ano e `mean` calcula a média.
     if not Path("./Data/Processed/season_mean_pm2p5.nc").exists():
         logging.warning("Calculating season mean.")
@@ -128,7 +139,7 @@ def combine_datasets():
         season_mean = season_mean.pm2p5.transpose("year", "latitude", "longitude")
         season_mean.rio.to_raster("./Data/Processed/season_mean_pm2p5.tif")
 
-    # 22. Calculando a média mensal do PM2.5 e salvando o resultado
+    # 23. Calculando a média mensal do PM2.5 e salvando o resultado
     if not Path("./Data/Processed/monthly_mean_pm2p5.nc").exists():
         logging.warning("Calculating monthly mean.")
         monthly_mean = ds.groupby("Brasilia_reference_time.month").mean()
@@ -137,7 +148,7 @@ def combine_datasets():
         monthly_mean = monthly_mean.pm2p5.transpose("month", "latitude", "longitude")
         monthly_mean.rio.to_raster("./Data/Processed/monthly_mean_pm2p5.tif")
 
-    # 23. Calculando a mediana para todo o periodo
+    # 24. Calculando a mediana para todo o periodo
     if not Path("./Data/Processed/median_pm2p5.tif").exists():
         logging.warning("Calculating median.")
         median = ds.pm2p5.median(dim="Brasilia_reference_time")
@@ -146,16 +157,21 @@ def combine_datasets():
         median = median.transpose("latitude", "longitude")
         median.rio.to_raster("./Data/Processed/median_pm2p5.tif")
 
-    # 24. Calculando a quantidade de dias acima de 15 ug/m³
+    # 25. Calculando a quantidade de dias acima de 15 ug/m³
     if not Path("./Data/Processed/days_above_15.tif").exists():
         logging.warning("Calculating days above 15 ug/m³.")
-        days_above_15 = (ds["pm2p5"] > 15).groupby("Brasilia_reference_time.date").sum()
+        # sum the amount of days that the value of pm2p5 was over 15
+        days_above_15 = ds.groupby("Brasilia_reference_time.date").mean().pm2p5 > 15
+        days_above_15 = days_above_15.sum(dim="date", skipna=True)
+        days_above_15 = days_above_15.transpose("latitude", "longitude")
+        days_above_15 = days_above_15.rio.write_crs("EPSG:4326")
+        days_above_15 = days_above_15.astype("int32")
+        # days_above_15 = xr.where(ds['pm2p5'].isnull().all(dim="Brasilia_reference_time"), float("nan"), days_above_15)
         # days_above_15.to_netcdf("./Data/Processed/days_above_15.nc")
         logging.warning("Exporting days above 15 to tif.")
-        days_above_15 = days_above_15.transpose("date", "latitude", "longitude")
         days_above_15.rio.to_raster("./Data/Processed/days_above_15.tif")
 
-    # 25. Calculando o valor maximo de pm2p5 para todo o periodo
+    # 26. Calculando o valor maximo de pm2p5 para todo o periodo
     if not Path("./Data/Processed/max_pm2p5.tif").exists():
         logging.warning("Calculating max pm2p5.")
         max_pm2p5 = ds.pm2p5.max(dim="Brasilia_reference_time")
