@@ -10,10 +10,19 @@ import geopandas as gpd
 def combine_datasets():
     # 1. Obtenha a lista de arquivos NetCDF presentes em um diretório e subdiretórios.
     datasets = glob("./Data/Raw/CAMS_AMZ/unzipped/*/*.nc")
+    if not datasets:
+        logging.warning("No datasets found to process.")
+        return
+
     logging.warning(f"Found {len(datasets)} datasets to process.")
     # Carregar o limite da Amazonia Legal
+    gpkg_path = "./Data/Raw/IBGE/Limites_Territoriais_AmazoniaLegal.gpkg"
+    if not gpkg_path:
+        logging.warning("Geopakcgae not found. Please donwload it from https://drive.google.com/file/d/17XwGFL5njDCzJGRp_T0i_Imn5n-PBscE/view?usp=sharing and save into ./Data/Raw/IBGE/")
+        return
+
     legal_amz = gpd.read_file(
-        "./Data/Raw/IBGE/Limites_Territoriais_AmazoniaLegal.gpkg",
+        gpkg_path,
         layer="Municipios_2022",
     )
 

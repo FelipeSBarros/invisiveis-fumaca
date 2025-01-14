@@ -12,6 +12,9 @@ monthly_mean = xr.open_dataset("./Data/Processed/monthly_mean_pm2p5.nc")
 
 
 def extract_values(gpkg_path, territory_layer_name, output_path):
+    if not gpkg_path.exists():
+        raise FileNotFoundError(f"File {gpkg_path} not found.")
+
     territory = gpd.read_file(gpkg_path, layer=territory_layer_name)
     # Calculando estatísticas zonais para todo o período
     # Calculando estatísticas zonais mensais

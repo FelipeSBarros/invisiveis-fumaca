@@ -31,6 +31,12 @@ def unzip_pm2p5_data(start_date, end_date):
         # Utiliza o glob para encontrar arquivos com o nome que começa com 'cams_' e a data do mês atual
         files = glob.glob(f"./Data/Raw/CAMS_AMZ/cams_{dt}*")
 
+        # confirma se exite algum arquivo para o mês atual
+        if not files:
+            logging.warning(f"No files found for {dt}. Skipping to next month.")
+            dt += relativedelta(months=1)
+            continue
+
         # Cria um diretório específico para o mês atual dentro do diretório de destino
         intermediate_path = Path.joinpath(dest_path, str(dt))
 
