@@ -7,6 +7,42 @@ from pathlib import Path  # Para manipulação de caminhos de arquivos
 import geopandas as gpd
 
 
+def identify_critical_pixels(
+    ds,
+    n_critical_pixels=20,
+    output_file="top_critical_pixels_mask.tif",
+):
+    logging.warning(f"Criando máscara de píxels críticos: {output_file}")
+    # Selecionar a variável de interesse
+    if isinstance(ds, xr.Dataset):
+        pm2p5 = ds["pm2p5"]
+    else:
+        pm2p5 = ds
+    # Obter valores válidos (ignorar NaN)
+    valid_values = pm2p5.values[~np.isnan(pm2p5.values)]
+
+    # Determinar o limite do menor valor entre os n maiores
+    threshold_value = np.partition(valid_values, -n_critical_pixels)[-n_critical_pixels]
+
+    # Criar uma máscara binária: 1 para valores maiores/iguais ao limite, 0 para os demais
+    mask = xr.where(pm2p5 >= threshold_value, 1, 0)
+
+    # Configurar atributos geoespaciais
+    mask = mask.rio.write_crs(pm2p5.rio.crs)
+    mask = mask.rio.write_transform(pm2p5.rio.transform())
+
+    # Garantir a ordem de dimensões para compatibilidade com exportação
+    if len(mask.dims) == 3:
+        mask = mask.transpose(list(mask.dims)[0], "latitude", "longitude")
+    else:
+        mask = mask.transpose("latitude", "longitude")
+
+    # Exportar a máscara como GeoTIFF
+    mask.rio.to_raster(output_file, dtype="uint8")
+
+    logging.warning(f"Máscara salva em: {output_file}")
+
+
 def combine_datasets():
     # 1. Obtenha a lista de arquivos NetCDF presentes em um diretório e subdiretórios.
     datasets = glob("./Data/Raw/CAMS_AMZ/unzipped/*/*.nc")
@@ -18,7 +54,9 @@ def combine_datasets():
     # Carregar o limite da Amazonia Legal
     gpkg_path = "./Data/Raw/IBGE/Limites_Territoriais_AmazoniaLegal.gpkg"
     if not gpkg_path:
-        logging.warning("Geopakcgae not found. Please donwload it from https://drive.google.com/file/d/17XwGFL5njDCzJGRp_T0i_Imn5n-PBscE/view?usp=sharing and save into ./Data/Raw/IBGE/")
+        logging.warning(
+            "Geopakcgae not found. Please donwload it from https://drive.google.com/file/d/17XwGFL5njDCzJGRp_T0i_Imn5n-PBscE/view?usp=sharing and save into ./Data/Raw/IBGE/"
+        )
         return
 
     legal_amz = gpd.read_file(
@@ -147,12 +185,26 @@ def combine_datasets():
         logging.warning("Exporting monthly mean to tif.")
         season_mean = season_mean.pm2p5.transpose("year", "latitude", "longitude")
         season_mean.rio.to_raster("./Data/Processed/season_mean_pm2p5.tif")
+        # Calcula mascara de pixels críticos
+        identify_critical_pixels(
+            ds=season_mean,
+            n_critical_pixels=20,
+            output_file="./Data/Processed/season_mean_20_top_critical_pixels_mask.tif",
+        )
 
     # 23. Calculando a média mensal do PM2.5 e salvando o resultado
     if not Path("./Data/Processed/monthly_mean_pm2p5.nc").exists():
         logging.warning("Calculating monthly mean.")
         monthly_mean = ds.groupby("Brasilia_reference_time.month").mean()
         monthly_mean.to_netcdf("./Data/Processed/monthly_mean_pm2p5.nc")
+        for month in monthly_mean["month"].values:
+            subset = monthly_mean.sel(month=month)
+            identify_critical_pixels(
+                ds=subset,
+                n_critical_pixels=20,
+                output_file=f"./Data/Processed/month_{month}_pm2p5_20_top_critical_pixels_mask.tif",
+            )
+
         logging.warning("Exporting monthly mean to tif.")
         monthly_mean = monthly_mean.pm2p5.transpose("month", "latitude", "longitude")
         monthly_mean.rio.to_raster("./Data/Processed/monthly_mean_pm2p5.tif")
@@ -161,6 +213,11 @@ def combine_datasets():
     if not Path("./Data/Processed/median_pm2p5.tif").exists():
         logging.warning("Calculating median.")
         median = ds.pm2p5.median(dim="Brasilia_reference_time")
+        identify_critical_pixels(
+            ds=median,
+            n_critical_pixels=20,
+            output_file="./Data/Processed/median_pm2p5_20_top_critical_pixels_mask.tif",
+        )
         # median.to_netcdf("./Data/Processed/median_pm2p5.nc")
         logging.warning("Exporting median to tif.")
         median = median.transpose("latitude", "longitude")
@@ -179,15 +236,21 @@ def combine_datasets():
         # days_above_15.to_netcdf("./Data/Processed/days_above_15.nc")
         logging.warning("Exporting days above 15 to tif.")
         days_above_15.rio.to_raster("./Data/Processed/days_above_15.tif")
+        identify_critical_pixels(
+            ds=days_above_15,
+            n_critical_pixels=20,
+            output_file="./Data/Processed/days_above_15_pm2p5_20_top_critical_pixels_mask.tif",
+        )
 
-    # 26. Calculando o valor maximo de pm2p5 para todo o periodo
+    # 26. Calculando o valor maximo diario de pm2p5 para todo o periodo
     if not Path("./Data/Processed/max_pm2p5.tif").exists():
         logging.warning("Calculating max pm2p5.")
-        max_pm2p5 = ds.pm2p5.max(dim="Brasilia_reference_time")
+        daily_mean = ds.groupby("Brasilia_reference_time.date").mean()
+        max_daily_pm2p5 = daily_mean.pm2p5.max(dim="date")
         # max_pm2p5.to_netcdf("./Data/Processed/max_pm2p5.nc")
         logging.warning("Exporting max pm2p5 to tif.")
-        max_pm2p5 = max_pm2p5.transpose("latitude", "longitude")
-        max_pm2p5.rio.to_raster("./Data/Processed/max_pm2p5.tif")
+        max_daily_pm2p5 = max_daily_pm2p5.transpose("latitude", "longitude")
+        max_daily_pm2p5.rio.to_raster("./Data/Processed/max_pm2p5.tif")
 
 
 if __name__ == "__main__":
