@@ -11,28 +11,48 @@ season_mean = xr.open_dataset("./Data/Processed/season_mean_pm2p5.nc")
 monthly_mean = xr.open_dataset("./Data/Processed/monthly_mean_pm2p5.nc")
 
 
-def extract_values(gpkg_path, territory_layer_name, output_path):
+def extract_values(gpkg_path, territory_layer_name, output_path, zonal_stats=True):
     if not gpkg_path.exists():
         raise FileNotFoundError(f"File {gpkg_path} not found.")
 
     territory = gpd.read_file(gpkg_path, layer=territory_layer_name)
-    # Calculando estatísticas zonais para todo o período
-    # Calculando estatísticas zonais mensais
-    logging.warning(f"Extracting pm2p5 monthly mean values for {territory_layer_name}.")
-    monthly_stats = monthly_mean.xvec.zonal_stats(
-        territory.geometry,
-        x_coords="longitude",
-        y_coords="latitude",
-        method="exactextract",
-    )
+    if not zonal_stats:
+        # sample the monthly_mean DataSet according to territory point location
+        logging.warning(
+            f"Extracting pm2p5 monthly mean values for {territory_layer_name}."
+        )
+        monthly_stats = monthly_mean.xvec.extract_points(
+            territory.geometry, x_coords="longitude", y_coords="latitude"
+        )
+        # Calculando estatísticas zonais para todo o período
+        logging.warning(
+            f"Extracting pm2p5 season mean values for {territory_layer_name}."
+        )
+        season_stats = season_mean.xvec.extract_points(
+            territory.geometry, x_coords="longitude", y_coords="latitude"
+        )
 
-    logging.warning(f"Extracting pm2p5 season mean values for {territory_layer_name}.")
-    season_stats = season_mean.xvec.zonal_stats(
-        territory.geometry,
-        x_coords="longitude",
-        y_coords="latitude",
-        method="exactextract",
-    )
+    if zonal_stats:
+        # Calculando estatísticas zonais mensais
+        logging.warning(
+            f"Extracting pm2p5 monthly mean values for {territory_layer_name}."
+        )
+        monthly_stats = monthly_mean.xvec.zonal_stats(
+            territory.geometry,
+            x_coords="longitude",
+            y_coords="latitude",
+            method="exactextract",
+        )
+        # Calculando estatísticas zonais para todo o período
+        logging.warning(
+            f"Extracting pm2p5 season mean values for {territory_layer_name}."
+        )
+        season_stats = season_mean.xvec.zonal_stats(
+            territory.geometry,
+            x_coords="longitude",
+            y_coords="latitude",
+            method="exactextract",
+        )
 
     # Convertendo os resultados das estatísticas zonais para um GeoDataFrame
     logging.warning(
@@ -65,13 +85,12 @@ def extract_values(gpkg_path, territory_layer_name, output_path):
         "Dez",
     ]
 
-    # Fazendo o join com os limites dos municípios
-    # A opção `inner` garante que apenas os municípios com dados sejam mantidos.
+    # Fazendo o join com o limite territorial
     logging.warning(f"Joining results with {territory_layer_name} boundaries.")
     monthly_gdf = territory.join(monthly_stats_df, how="inner")
     final_gdf = monthly_gdf.join(season_stats_df, how="inner")
 
-    # Exibindo o DataFrame final para verificar os resultados
+    # Salvando o GeoDataFrame em um arquivo GeoPackage
     logging.warning(f"Saving GeoDataFrame in {output_path}")
     final_gdf.to_file(output_path, layer=f"{territory_layer_name}_pm2p5", driver="GPKG")
 
