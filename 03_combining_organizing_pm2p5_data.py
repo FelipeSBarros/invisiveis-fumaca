@@ -5,12 +5,15 @@ import numpy as np  # Importa numpy para operações numéricas
 import logging  # Para registrar logs de execução
 from pathlib import Path  # Para manipulação de caminhos de arquivos
 import geopandas as gpd
+import rioxarray
+from geocube.vector import vectorize
+
 
 
 def identify_critical_pixels(
     ds,
     n_critical_pixels=20,
-    output_file="top_critical_pixels_mask.tif",
+    output_file="top_critical_pixels_mask",
 ):
     logging.warning(f"Criando máscara de píxels críticos: {output_file}")
     # Selecionar a variável de interesse
@@ -28,6 +31,7 @@ def identify_critical_pixels(
     mask = xr.where(pm2p5 >= threshold_value, 1, 0)
 
     # Configurar atributos geoespaciais
+    mask = mask.rio.write_nodata(0)
     mask = mask.rio.write_crs(pm2p5.rio.crs)
     mask = mask.rio.write_transform(pm2p5.rio.transform())
 
@@ -38,9 +42,16 @@ def identify_critical_pixels(
         mask = mask.transpose("latitude", "longitude")
 
     # Exportar a máscara como GeoTIFF
-    mask.rio.to_raster(output_file, dtype="uint8")
+    mask.rio.to_raster(f"{output_file}.tif", dtype="uint8")
 
     logging.warning(f"Máscara salva em: {output_file}")
+
+
+    data = rioxarray.open_rasterio(f"{output_file}.tif", mask_and_scale=True).squeeze()
+    data.name = output_file
+    gdf = vectorize(data)
+    gdf.to_file(f"./Data/Processed/results.gpkg", driver="GPKG", layer=output_file.split('/')[-1])
+    logging.warning(f"{output_file} vetorizado")
 
 
 def combine_datasets():
@@ -189,7 +200,7 @@ def combine_datasets():
         identify_critical_pixels(
             ds=season_mean,
             n_critical_pixels=20,
-            output_file="./Data/Processed/season_mean_20_top_critical_pixels_mask.tif",
+            output_file="./Data/Processed/season_mean_20_top_critical_pixels_mask",
         )
 
     # 23. Calculando a média mensal do PM2.5 e salvando o resultado
@@ -202,7 +213,7 @@ def combine_datasets():
             identify_critical_pixels(
                 ds=subset,
                 n_critical_pixels=20,
-                output_file=f"./Data/Processed/month_{month}_pm2p5_20_top_critical_pixels_mask.tif",
+                output_file=f"./Data/Processed/month_{month}_pm2p5_20_top_critical_pixels_mask",
             )
 
         logging.warning("Exporting monthly mean to tif.")
@@ -216,7 +227,7 @@ def combine_datasets():
         identify_critical_pixels(
             ds=median,
             n_critical_pixels=20,
-            output_file="./Data/Processed/median_pm2p5_20_top_critical_pixels_mask.tif",
+            output_file="./Data/Processed/median_pm2p5_20_top_critical_pixels_mask",
         )
         # median.to_netcdf("./Data/Processed/median_pm2p5.nc")
         logging.warning("Exporting median to tif.")
@@ -239,7 +250,7 @@ def combine_datasets():
         identify_critical_pixels(
             ds=days_above_15,
             n_critical_pixels=20,
-            output_file="./Data/Processed/days_above_15_pm2p5_20_top_critical_pixels_mask.tif",
+            output_file="./Data/Processed/days_above_15_pm2p5_20_top_critical_pixels_mask",
         )
 
     # 26. Calculando o valor maximo diario de pm2p5 para todo o periodo

@@ -26,6 +26,25 @@ Os dados de [municípios](https://www.ibge.gov.br/geociencias/cartas-e-mapas/map
 
 Os dados das Terras Indígenas foram baixados do [INCRA](https://www.gov.br/funai/pt-br/atuacao/terras-indigenas/geoprocessamento-e-mapas).
 
+## Localidades indígenas
+
+[Localidades indigenas](https://www.ibge.gov.br/geociencias/downloads-geociencias.html?caminho=organizacao_do_territorio/estrutura_territorial/localidades/localidades_indigenas_2022/Arquivos_vetoriais/LI/shp/UF)
+
+Foram usados os dados espaciais de localização das localidades indígenas. Os demais dados apresentados pelo IBGE (_Tabelas de Resultados
+_)são agregados por UF e Município, escalas que não são de interesse para o projeto.
+
+## Localidades Quilombolas
+
+[Localidades Quilombolas](https://www.ibge.gov.br/estatisticas/sociais/trabalho/22827-censo-demografico-2022.html?edicao=40667&t=acesso-ao-produto)
+
+Foram usados os dados espaciais de localização das localidades quilombolas. Os demais dados apresentados pelo IBGE (_Tabelas de Resultados
+_) são agregados por UF e Município, escalas que não são de interesse para o projeto.
+
+## Favelas e Comunidades Urbanas
+
+[Favelas e Comunidades Urbanas ](https://www.ibge.gov.br/estatisticas/sociais/trabalho/22827-censo-demografico-2022.html?edicao=41773)
+
+# Acesso aos dados
 > Ambos dados estão disponíveis no `geopackage` Limites_Territoriais_AmazoniaLegal.
 
 # Processamento dos dados
