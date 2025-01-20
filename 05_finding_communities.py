@@ -22,3 +22,15 @@ if __name__ == "__main__":
         variable="media_temporada",
         q=0.9,
     )
+    filter_q90(
+        gpkg_path="./Data/Processed/results.gpkg",
+        territory="Localidades_Quilombolas_pm2p5",
+        variable="media_temporada",
+        q=0.9,
+    )
+    filter_q90(
+        gpkg_path="./Data/Processed/results.gpkg",
+        territory="Favelas_Comunidades_Urbanas_Centroide_pm2p5",
+        variable="media_temporada",
+        q=0.9,
+    )

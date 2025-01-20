@@ -9,7 +9,6 @@ import rioxarray
 from geocube.vector import vectorize
 
 
-
 def identify_critical_pixels(
     ds,
     n_critical_pixels=20,
@@ -46,12 +45,15 @@ def identify_critical_pixels(
 
     logging.warning(f"Máscara salva em: {output_file}")
 
-
-    data = rioxarray.open_rasterio(f"{output_file}.tif", mask_and_scale=True).squeeze()
-    data.name = output_file
-    gdf = vectorize(data)
-    gdf.to_file(f"./Data/Processed/results.gpkg", driver="GPKG", layer=output_file.split('/')[-1])
-    logging.warning(f"{output_file} vetorizado")
+    # data = rioxarray.open_rasterio(f"{output_file}.tif", mask_and_scale=True).squeeze()
+    # data.name = output_file
+    # gdf = vectorize(data)
+    # gdf.to_file(
+    #     f"./Data/Processed/results.gpkg",
+    #     driver="GPKG",
+    #     layer=output_file.split("/")[-1],
+    # )
+    # logging.warning(f"{output_file} vetorizado")
 
 
 def combine_datasets():

@@ -1,4 +1,6 @@
 # Importando bibliotecas necessárias
+from pathlib import Path
+
 import xvec
 import logging
 import geopandas as gpd
@@ -12,7 +14,7 @@ monthly_mean = xr.open_dataset("./Data/Processed/monthly_mean_pm2p5.nc")
 
 
 def extract_values(gpkg_path, territory_layer_name, output_path, zonal_stats=True):
-    if not gpkg_path.exists():
+    if not Path(gpkg_path).exists():
         raise FileNotFoundError(f"File {gpkg_path} not found.")
 
     territory = gpd.read_file(gpkg_path, layer=territory_layer_name)
@@ -99,17 +101,35 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.WARNING)
     extract_values(
         gpkg_path="./Data/Raw/IBGE/Limites_Territoriais_AmazoniaLegal.gpkg",
+        territory_layer_name="Localidades_Quilombolas",
+        output_path="./Data/Processed/results.gpkg",
+        zonal_stats=False,
+    )
+    extract_values(
+        gpkg_path="./Data/Raw/IBGE/Limites_Territoriais_AmazoniaLegal.gpkg",
+        territory_layer_name="Localidades_Indigenas",
+        output_path="./Data/Processed/results.gpkg",
+        zonal_stats=False,
+    )
+    extract_values(
+        gpkg_path="./Data/Raw/IBGE/Limites_Territoriais_AmazoniaLegal.gpkg",
+        territory_layer_name="Favelas_Comunidades_Urbanas_Centroide",
+        output_path="./Data/Processed/results.gpkg",
+        zonal_stats=False,
+    )
+    extract_values(
+        gpkg_path="./Data/Raw/IBGE/Limites_Territoriais_AmazoniaLegal.gpkg",
         territory_layer_name="Municipios_2022",
         output_path="./Data/Processed/results.gpkg",
     )
     extract_values(
         gpkg_path="./Data/Raw/IBGE/Limites_Territoriais_AmazoniaLegal.gpkg",
-        territory_layer_name="Setores_Censitarios_2022",
+        territory_layer_name="TerrasIndigenas_2022",
         output_path="./Data/Processed/results.gpkg",
     )
     extract_values(
         gpkg_path="./Data/Raw/IBGE/Limites_Territoriais_AmazoniaLegal.gpkg",
-        territory_layer_name="TerrasIndigenas_2022",
+        territory_layer_name="Setores_Censitarios_2022",
         output_path="./Data/Processed/results.gpkg",
     )
     logging.warning("Extração de valores concluída com sucesso!")
