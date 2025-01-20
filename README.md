@@ -18,9 +18,70 @@ Para poder usar a [API](https://ads.atmosphere.copernicus.eu/how-to-api), é nec
 
 Os dados de focos de calor foram baixados do [INPE](https://terrabrasilis.dpi.inpe.br/queimadas/bdqueimadas), dos satélites NPP-375 para a Amazônia Legal, considerando a janela temporal do projeto (01/07/2024 a 31/12/2024).
 
-## Municípios e  setores censitários 2022
+## Municípios e setores censitários 2022
 
 Os dados de [municípios](https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15819-amazonia-legal.html) e [setores censitários](https://www.ibge.gov.br/estatisticas/downloads-estatisticas.html) foram adquiridos do IBGE. Em abmso os casos, considerou-se apenas aqueles que fazem parte da Amazônia Legal.
+
+### Dicionário da tabela de atributos dos setores censitários
+
+| VARIÁVEL 	| CATEGORIAS 	| DESCRIÇÃO 	|
+|---	|---	|---	|
+| CD_SETOR 	|  	| Geocódigo de Setor Censitário 	|
+| SITUACAO 	|  	| Situação do Setor Censitário 	|
+|  	| Urbana 	| Urbana 	|
+|  	| Rural 	| Rural 	|
+| CD_SITUACAO 	|  	| Situação detalhada do Setor Censitário 	|
+|  	| 1 	| Área urbana de alta densidade de edificações de cidade ou vila 	|
+|  	| 2 	| Área urbana de baixa densidade de edificações de cidade ou vila 	|
+|  	| 3 	| Núcleo urbano 	|
+|  	| 5 	| Aglomerado rural - Povoado 	|
+|  	| 6 	| Aglomerado rural - Núcleo rural 	|
+|  	| 7 	| Aglomerado rural - Lugarejo 	|
+|  	| 8 	| Área rural (exclusive aglomerados) 	|
+|  	| 9 	| Massas de água 	|
+| CD_TIPO 	|  	| Tipo do Setor Censitário 	|
+|  	| 0 	| Não especial 	|
+|  	| 1 	| Favela e Comunidade Urbana 	|
+|  	| 2 	| Quartel e base militar 	|
+|  	| 3 	| Alojamento / acampamento 	|
+|  	| 4 	| Setor com baixo patamar domiciliar 	|
+|  	| 5 	| Agrupamento indígena 	|
+|  	| 6 	| Unidade prisional 	|
+|  	| 7 	| Convento / hospital / ILPI / IACA 	|
+|  	| 8 	| Agrovila do PA 	|
+|  	| 9 	| Agrupamento quilombola 	|
+| AREA_KM2 	|  	| Área do Setor Censitário em quilômetros quadrados 	|
+| CD_REGIAO 	|  	| Código das Grandes Regiões (Regiões Geográficas) 	|
+| NM_REGIAO 	|  	| Nome das Grandes Regiões (Regiões Geográficas) 	|
+| CD_UF 	|  	| Código da Unidade da Federação 	|
+| NM_UF 	|  	| Nome da Unidade da Federação 	|
+| CD_MUN 	|  	| Código do Município 	|
+| NM_MUN 	|  	| Nome do Município 	|
+| CD_DIST 	|  	| Código do Distrito 	|
+| NM_DIST 	|  	| Nome do Distrito 	|
+| CD_SUBDIS 	|  	| Código do Subdistrito 	|
+| NM_SUBDIST 	|  	| Nome do Subdistrito 	|
+| CD_BAIRRO 	|  	| Código do Bairro 	|
+| NM_BAIRRO 	|  	| Nome do Bairro 	|
+| CD_NU 	|  	| Código do Núcleo Urbano 	|
+| NM_NU 	|  	| Nome do Núcleo Urbano 	|
+| CD_FCU 	|  	| Código da Favela ou Comunidade Urbana 	|
+| NM_FCU 	|  	| Nome da Favela ou Comunidade Urbana 	|
+| CD_AGLOM 	|  	| Código do Aglomerado 	|
+| NM_AGLOM 	|  	| Nome do Aglomerado 	|
+| CD_RGINT 	|  	| Código da Região Geográfica Intermediária 	|
+| NM_RGINT 	|  	| Nome da Região Geográfica Intermediária 	|
+| CD_RGI 	|  	| Código da Região Geográfica Imediata 	|
+| NM_RGI 	|  	| Nome da Região Geográfica Imediata 	|
+| CD_CONCURB 	|  	| Código da Concentração Urbana 	|
+| NM_CONCURB 	|  	| Nome da Concentração Urbana 	|
+| V0001 	|  	| Total de pessoas 	|
+| V0002 	|  	| Total de Domicílios (DPPO + DPPV + DPPUO + DPIO + DCCM + DCSM) 	|
+| V0003 	|  	| Total de Domicílios Particulares (DPPO + DPPV + DPPUO + DPIO) 	|
+| V0004 	|  	| Total de Domicílios Coletivos (DCCM + DCSM) 	|
+| V0005 	|  	| Média de moradores em Domicílios Particulares Ocupados (Total pessoas em Domicílios Particulares Ocupados / DPPO + DPIO) 	|
+| V0006 	|  	| Percentual de Domicílios Particulares Ocupados Imputados (Total DPO imputados / Total DPO) 	|
+| V0007 	|  	| Total de Domicílios Particulares Ocupados (DPPO + DPIO) 	|
 
 ## Terras Indigenas
 
@@ -39,6 +100,29 @@ _)são agregados por UF e Município, escalas que não são de interesse para o 
 
 Foram usados os dados espaciais de localização das localidades quilombolas. Os demais dados apresentados pelo IBGE (_Tabelas de Resultados
 _) são agregados por UF e Município, escalas que não são de interesse para o projeto.
+
+### Dicionário de atributos das localidades quilombolas
+
+| VARIÁVEL 	| TIPO 	| TAMANHO 	| DESCRIÇÃO 	|
+|---	|---	|---	|---	|
+| CD_UF 	| numérico 	| 2 	| Geocódigo da Unidade da Federação 	|
+| NM_UF 	| texto 	| 20 	| Nome da Unidade da Federação 	|
+| SG_UF 	| texto 	| 2 	| Sigla da Unidade da Federação 	|
+| CD_MUNIC 	| numérico 	| 7 	| Geocódigo do município 	|
+| NM_MUNIC 	| texto 	| 50 	| Nome do município 	|
+| IDCQ0001 	| texto 	| 5 	| Código único nacional da Comunidade Quilombola declarada com localidade associada 	|
+| OCORRENCIA 	| numérico 	| 1 	| Ordem de ocorrência da Localidade Quilombola no Município 	|
+| CD_LQ 	| texto 	| 12 	| Código municipal da Localidade Quilombola associada à Comunidade Quilombola declarada 	|
+| PREFIXO 	| texto 	| 21 	| Prefixo geral das Comunidades Quilombolas com localidade associada 	|
+| NM_LQ 	| texto 	| 100 	| Nome da Comunidade Quilombola declarada com localidade associada 	|
+| CD_AGLOM 	| texto 	| 5 	| Código do agrupamento quilombola 	|
+| NM_AGLOM 	| texto 	| 100 	| Nome do agrupamento quilombola 	|
+| CD_TQ 	| numérico 	| 3 	| Código do Território Quilombola oficialmente delimitado 	|
+| NM_TQ 	| texto 	| 60 	| Nome do Território Quilombola oficialmente delimitado 	|
+| P_FCP 	| texto 	| 70 	| Número do processo de identificação e reconhecimento na Fundação Cultural Palmares 	|
+| Lat_d 	| numérico 	| 20 	| Latitude em graus decimais 	|
+| Long_d 	| numérico 	| 20 	| Longitude em graus decimais 	|
+| Nota: O CD_LQ é resultante da união entre CD_MUNIC, IDLQ0001 e OCORRENCIA. 	|  	|  	|  	|
 
 ## Favelas e Comunidades Urbanas
 
