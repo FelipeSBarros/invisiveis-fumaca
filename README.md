@@ -236,3 +236,4 @@ Para cada fase de processamento dos dados, foi criado um script Python. A seguir
 3. [`03_combine_pm2p5_data.py`](03_combine_pm2p5_data.py): Script que combina, organiza e padroniza os dados de PM2.5 descompactados. Como resultado teremos um único arquivo `NetCDF` com todos os dados, outros dois netCDFs com a média de PM2.5 para a temporada e a média mensal.
 4. [`04_extract_pm2p5_data.py`](04_extract_pm2p5_data.py) extrai os dados de PM2.5 mensais e de toda a temporada para cada teritório a ser considerado: município, setor censitário e terras indígenas, localidades indígenas, localidades quilombolas e favelas e comunidades urbanas, da Amazônia Legal.
 5. [`05_finding_communities`](05_finding_communities.py) Identifica, dos territórios analisados, aqueles 10% mais afetados.
+5. [`06_export_excel`](06_export_excel.py) Exporta a tabela de atributo dos resultados a excel.
