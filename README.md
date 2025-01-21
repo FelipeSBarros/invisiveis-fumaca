@@ -7,12 +7,27 @@ Neste repositório, você encontrará os scripts usados para baixar, processar e
 # Tabela de conteúdos
 
 * [Invisíveis da Fumaça](#invisíveis-da-fumaça)
+* [Metodologia](#metodologia)
 * [Resultados](#resultados)
 
 Caso queira conhecer a metodologia do projeto e, quem sabe, replicá-lo, os seguintes tópicos podem ajudar:
 
 * [Aquisição dos dados](#aquisição-dos-dados)
 * [Processamento dos dados](#processamento-dos-dados)
+
+# Metodologia
+
+Os dados de particulado fino foram baixados para a Amazônia Legal. O mesmos precisaram ser organizados e tratados para que possamos trabalhar com as datas de Brasília (referência nacional), ainda que, na Amazônia, existam mais de uma zona horária.
+
+Com os dados baixados, usamos os setores censitários e de localidades (Indígenas, Quilombolas e Favelas e Comunidades Urbanas), chamados de "territórios", para extrair os valores de PM2.5 médio para cada território. Foram calculados os [valores médios de todo o período](https://drive.google.com/file/d/17T6hh3U5zUmzL49EIEkYljsI9x8XYh1m/view?usp=sharing) em estudo (Julho a Dezembro de 2024), assim como a [média de cada mês](https://drive.google.com/file/d/1Eis49U4TbHxHJMayzf90rhcYjU0GSEtE/view?usp=sharing);
+
+Ao identificar os valores de PM2.5 aos quais os territórios de localidades foram expostas (em todo o período e a cada mês), selecionamos os 10% mais afetados, usando o [quantil](https://pt.wikipedia.org/wiki/Quantil) 90 dos valores observados. Caso tal valor tenha sido menor que o limite máximo recomendável de exposição diária pela Organização Mundial da Saúde[1], este último foi usado (i.e.: 15 µg/m³). O resultado foi apresentado como um mapa web (ver [resultados](#resultados)).
+
+Para os dados de Setores Censitários, por se tratar de uma base de dados espacial muito grande, a mesma foi exportada como planilha eletrônica.
+
+Todos os dados, sejam eles apresentados em mapa web, sejam em planilha eletrônica, estão disponíveis no `geopackage` [results](https://drive.google.com/file/d/1sXPW0Boiud3v4RD0kCssE_gnqX3V8rRE/view?usp=sharing).
+
+[1]: World Health Organization. (‎2021)‎. WHO global air quality guidelines: particulate matter (‎PM2.5 and PM10)‎, ozone, nitrogen dioxide, sulfur dioxide and carbon monoxide. World Health Organization. https://iris.who.int/handle/10665/345329. License: CC BY-NC-SA 3.0 IGO
 
 # Resultados
 
@@ -29,7 +44,7 @@ Um mapa web foi criado com os valores de PM2.5 médio para todo o período e a c
 
 Aqui apresentaremos como foram adquiridos e usados os dados do projeto.
 
-> Todos os dados estão disponíveis no `geopackage` Limites_Territoriais_AmazoniaLegal.
+> Todos os dados **originais** estão disponíveis no `geopackage` [Limites_Territoriais_AmazoniaLegal](https://drive.google.com/file/d/1eevqJS-yv-xrgyi0AY_zsJaaAPi2A066/view?usp=sharing).
 
 ## Particulado fino (PM2.5 ou pm2p5)
 

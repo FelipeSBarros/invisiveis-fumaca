@@ -17,18 +17,6 @@ dev = ["coveralls", "flake8", "pydocstyle"]
 test = ["pytest (>=4.6)", "pytest-cov"]
 
 [[package]]
-name = "appdirs"
-version = "1.4.4"
-description = "A small Python module for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "appdirs-1.4.4-py2.py3-none-any.whl", hash = "sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"},
-    {file = "appdirs-1.4.4.tar.gz", hash = "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"},
-]
-
-[[package]]
 name = "attrs"
 version = "24.3.0"
 description = "Classes Without Boilerplate"
@@ -62,18 +50,6 @@ files = [
 
 [package.dependencies]
 jinja2 = ">=3"
-
-[[package]]
-name = "cachetools"
-version = "5.5.0"
-description = "Extensible memoizing collections and decorators"
-category = "main"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "cachetools-5.5.0-py3-none-any.whl", hash = "sha256:02134e8439cdc2ffb62023ce1debca2944c3f289d66bb17ead3ab3dede74b292"},
-    {file = "cachetools-5.5.0.tar.gz", hash = "sha256:2cc24fb4cbe39633fb7badd9db9ca6295d766d9c2995f245725a46715d050f2a"},
-]
 
 [[package]]
 name = "cartopy"
@@ -571,6 +547,18 @@ typing-extensions = "*"
 legacy = ["cdsapi"]
 
 [[package]]
+name = "et-xmlfile"
+version = "2.0.0"
+description = "An implementation of lxml.xmlfile for the standard library"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "et_xmlfile-2.0.0-py3-none-any.whl", hash = "sha256:7a91720bc756843502c3b7504c77b8fe44217c85c537d85037f0f536151b2caa"},
+    {file = "et_xmlfile-2.0.0.tar.gz", hash = "sha256:dab3f4764309081ce75662649be815c4c9081e88f0837825f90fd28317d4da54"},
+]
+
+[[package]]
 name = "exactextract"
 version = "0.2.0"
 description = "Fast and accurate raster zonal statistics"
@@ -760,30 +748,6 @@ html5lib = "1.1"
 lxml = ">=5.1.0,<6.0.0"
 requests = ">=2.25.1,<3.0.0"
 shapely = ">=1.7.0,<=2.1.0"
-
-[[package]]
-name = "geocube"
-version = "0.7.0"
-description = "Tool to convert geopandas vector data into rasterized xarray data."
-category = "main"
-optional = false
-python-versions = ">=3.10"
-files = [
-    {file = "geocube-0.7.0-py3-none-any.whl", hash = "sha256:19d014f3344f1f13e54a0f88e6e1cccd5109050a47edc572b578a677c985f00d"},
-    {file = "geocube-0.7.0.tar.gz", hash = "sha256:986ff46e78d7dede09a1c93bff1642c24aaa5590acdc774049436f86f0989ca4"},
-]
-
-[package.dependencies]
-appdirs = "*"
-click = ">=6.0"
-geopandas = ">=1"
-numpy = ">=1.20"
-odc-geo = "*"
-pyproj = ">=2"
-rasterio = ">=1.3"
-rioxarray = ">=0.4"
-scipy = "*"
-xarray = ">=0.17"
 
 [[package]]
 name = "geographiclib"
@@ -1578,32 +1542,19 @@ files = [
 ]
 
 [[package]]
-name = "odc-geo"
-version = "0.4.9.post0"
-description = "Geometry Classes and Operations (opendatacube)"
+name = "openpyxl"
+version = "3.1.5"
+description = "A Python library to read/write Excel 2010 xlsx/xlsm files"
 category = "main"
 optional = false
-python-versions = ">=3.9"
+python-versions = ">=3.8"
 files = [
-    {file = "odc_geo-0.4.9.post0-py3-none-any.whl", hash = "sha256:80559e18361c554046c3214cbe357ec00d64f9f407754b197bb8dc269708d5e7"},
-    {file = "odc_geo-0.4.9.post0.tar.gz", hash = "sha256:1b7bf45ab5ba98b3c61478784f8744fc24153ccca31ae58ef8edc04c2b17f68a"},
+    {file = "openpyxl-3.1.5-py2.py3-none-any.whl", hash = "sha256:5282c12b107bffeef825f4617dc029afaf41d0ea60823bbb665ef3079dc79de2"},
+    {file = "openpyxl-3.1.5.tar.gz", hash = "sha256:cf0e3cf56142039133628b5acffe8ef0c12bc902d2aadd3e0fe5878dc08d1050"},
 ]
 
 [package.dependencies]
-affine = "*"
-cachetools = "*"
-numpy = "*"
-pyproj = ">=3.0.0"
-shapely = "*"
-
-[package.extras]
-all = ["azure-storage-blob", "boto3", "dask[array,distributed]", "imagecodecs", "rasterio", "rasterio", "tifffile", "xarray (>=0.19)"]
-az = ["azure-storage-blob"]
-s3 = ["boto3"]
-test = ["dask[array,distributed]", "geopandas", "imagecodecs", "pytest", "rasterio", "tifffile", "xarray (>=0.19)"]
-tiff = ["dask[array,distributed]", "imagecodecs", "rasterio", "tifffile", "xarray (>=0.19)"]
-warp = ["rasterio"]
-xr = ["xarray (>=0.19)"]
+et-xmlfile = "*"
 
 [[package]]
 name = "packaging"
@@ -2494,4 +2445,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "7acf66bce90c65e20a2b69b1d0ebc23660e1d54bfb80f73fe210d699622a88db"
+content-hash = "ae26b47d92eb42dca461862ac6e72479e16d071bc6593d4f0722e8e75bad4d9f"
