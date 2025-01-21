@@ -1,8 +1,35 @@
 # Invisíveis da Fumaça
 
-Repositório criado para gestionar os scripts usados no projeto "Invisíveis da Fumaça" do [InfoAmazonia](https://infoamazonia.org/).
+Invisíveis da Fumaça é um projeto especial do [InfoAmazonia](https://infoamazonia.org/). Nele, usamos dados de particulado fino (PM2.5) para analisar a exposição de comunidades vulneráveis da Amazônia Legal à poluição do ar.
+
+Neste repositório, você encontrará os scripts usados para baixar, processar e analisar os dados de PM2.5, bem como os resultados encontrados.
+
+# Tabela de conteúdos
+
+* [Invisíveis da Fumaça](#invisíveis-da-fumaça)
+* [Resultados](#resultados)
+
+Caso queira conhecer a metodologia do projeto e, quem sabe, replicá-lo, os seguintes tópicos podem ajudar:
+
+* [Aquisição dos dados](#aquisição-dos-dados)
+* [Processamento dos dados](#processamento-dos-dados)
+
+# Resultados
+
+Um mapa web foi criado com os valores de PM2.5 médio para todo o período e a cada mês, com as Localidades Indígenas, Quilombolas e Favelas e comunidades urbanas da Amazônia Legal. 
+* [Média temporada](https://felipesbarros.github.io/invisiveis-fumaca/WebMap/media_temporada/#5/-6.494/-57.893)
+* [Julho](https://felipesbarros.github.io/invisiveis-fumaca/WebMap/Jul/)
+* [Agosto](https://felipesbarros.github.io/invisiveis-fumaca/WebMap/Ago/)
+* [Setembro](https://felipesbarros.github.io/invisiveis-fumaca/WebMap/Set/)
+* [Outubro](https://felipesbarros.github.io/invisiveis-fumaca/WebMap/Out/)
+* [Novembro](https://felipesbarros.github.io/invisiveis-fumaca/WebMap/Nov/)
+* [Dezembro](https://felipesbarros.github.io/invisiveis-fumaca/WebMap/Dez/)
 
 # Aquisição dos dados
+
+Aqui apresentaremos como foram adquiridos e usados os dados do projeto.
+
+> Todos os dados estão disponíveis no `geopackage` Limites_Territoriais_AmazoniaLegal.
 
 ## Particulado fino (PM2.5 ou pm2p5)
 
@@ -94,6 +121,63 @@ Os dados das Terras Indígenas foram baixados do [INCRA](https://www.gov.br/funa
 Foram usados os dados espaciais de localização das localidades indígenas. Os demais dados apresentados pelo IBGE (_Tabelas de Resultados
 _)são agregados por UF e Município, escalas que não são de interesse para o projeto.
 
+### Dicionário de atributos das localidades indígenas
+
+| VARIÁVEL 	| CATEGORIAS 	| DESCRIÇÃO 	|
+|---	|---	|---	|
+| CD_UF 	|  	| Código da Unidade da Federação 	|
+| NM_UF 	|  	| Nome da Unidade da Federação 	|
+| CD_MUNIC 	|  	| Código do Município 	|
+| NM_MUNIC 	|  	| Nome do município 	|
+| ID_LI 	|  	| Identificador único por registro de ocorrência de Localidade Indígena ou do Local de Concentração de Pessoas Indígenas 	|
+| CD_LI 	|  	| Código único nacional de Localidade Indígena ou do Local de Concentração de Pessoas Indígenas 	|
+| OCORRENCIA 	|  	| Ordem de ocorrência da Localidade Indígena ou do Local de Concentração de Pessoas Indígenas no Município 	|
+| NM_LI 	|  	| Nome da Localidade Indígena ou do Local de Concentração de Pessoas Indígenas 	|
+| CD_SETOR 	|  	| Geocódigo de Setor Censitário 	|
+| SITUACAO 	|  	| Situação do Setor Censitário 	|
+|  	| Urbana 	| Urbana 	|
+|  	| Rural 	| Rural 	|
+| CD_SIT 	|  	| Situação detalhada do Setor Censitário 	|
+|  	| 1 	| Área urbana de alta densidade de edificações de cidade ou vila 	|
+|  	| 2 	| Área urbana de baixa densidade de edificações de cidade ou vila 	|
+|  	| 3 	| Núcleo urbano 	|
+|  	| 5 	| Aglomerado rural - Povoado 	|
+|  	| 6 	| Aglomerado rural - Núcleo rural 	|
+|  	| 7 	| Aglomerado rural - Lugarejo 	|
+|  	| 8 	| Área rural (exclusive aglomerados) 	|
+|  	| 9 	| Massas de água 	|
+| CD_TIPO 	|  	| Tipo do Setor Censitário 	|
+|  	| 0 	| Não especial 	|
+|  	| 1 	| Favela e Comunidade Urbana 	|
+|  	| 2 	| Quartel e base militar 	|
+|  	| 3 	| Alojamento / acampamento 	|
+|  	| 4 	| Setor com baixo patamar domiciliar 	|
+|  	| 5 	| Agrupamento indígena 	|
+|  	| 6 	| Unidade prisional 	|
+|  	| 7 	| Convento / hospital / ILPI / IACA 	|
+|  	| 8 	| Agrovila do PA 	|
+|  	| 9 	| Agrupamento quilombola 	|
+| CD_AGLOM 	|  	| Código de Aglomerado associado ao Setor Censitário de Agrupamento Indígena 	|
+| NM_AGLOM 	|  	| Nome Aglomerado associado ao Setor Censitário de Agrupamento Indígena 	|
+| CD_TI 	|  	| Código da Terra Indígena no IBGE 	|
+| TI_FUNAI 	|  	| Código da Terra Indígena nos arquivos vetoriais da Funai 	|
+| NM_TI 	|  	| Nome da Terra Indígena 	|
+| FASE 	|  	| Situação fundiária da Terra Indígena 	|
+| C_CR_FUNAI 	|  	| Código da Coordenação Regional da Funai 	|
+| N_CR_FUNAI 	|  	| Nome da Coordenação Regional da Funai 	|
+| ALD_FUNAI 	|  	| Código da Aldeia Indígena no arquivos vetoriais da Funai 	|
+| VAL_FUNA 	|  	| Tipo de validação da interoperabilidade entre a Localidade Indígena e o respectivo código nos arquivos vetoriais de Aldeias Indígenas mantido pela Funai 	|
+|  	| 1 	| Validação espacial e cadastral 	|
+|  	| 2 	| Validação cadastral 	|
+| ALD_SIASI 	|  	| Código no arquivo vetorial do Sistema de Informações da Atenção à Saúde Indígena (Siasi) 	|
+| VAL_SIAS 	|  	| Tipo de validação da interoperabilidade entre a Localidade Indígena e o respectivo código no arquivo vetorial do Siasi 	|
+|  	| 1 	| Validação espacial e cadastral 	|
+|  	| 2 	| Validação cadastral 	|
+| AMZ_LEG 	|  	| Indicador de localização nos limites da Amazônia Legal 	|
+|  	| 1 	| Localizada na Amazônia Legal 	|
+| LAT 	|  	| Latitude em graus decimais 	|
+| LONG 	|  	| Longitude em graus decimais 	|
+
 ## Localidades Quilombolas
 
 [Localidades Quilombolas](https://www.ibge.gov.br/estatisticas/sociais/trabalho/22827-censo-demografico-2022.html?edicao=40667&t=acesso-ao-produto)
@@ -128,15 +212,12 @@ _) são agregados por UF e Município, escalas que não são de interesse para o
 
 [Favelas e Comunidades Urbanas ](https://www.ibge.gov.br/estatisticas/sociais/trabalho/22827-censo-demografico-2022.html?edicao=41773)
 
-# Acesso aos dados
-> Ambos dados estão disponíveis no `geopackage` Limites_Territoriais_AmazoniaLegal.
-
 # Processamento dos dados
 
-Para cada fase de processamento dos dados, foi criado um script Python. A seguir, a descrição de cada um deles:
+Para cada fase de processamento dos dados, foi criado um script Python. A seguir, o link e breve a descrição de cada um deles:
 
-1. [`01_downloading_pm2p5_data.py`](01_downloading_pm2p5_data.py), baixamos os dados de PM2.5 do CAMS.
-2. [`02_unzip_pm2p5_data.py`](02_unzip_pm2p5_data.py) descompacta os arquivos baixados.
-3. [`03_combine_pm2p5_data.py`](03_combine_pm2p5_data.py) combina, organiza e padroniza os dados de pm2p5 descompactados em um único arquivo `NetCDF`.
+1. [`01_downloading_pm2p5_data.py`](01_downloading_pm2p5_data.py): script usado para automatizar a requisição e o download baixamos dos dados de PM2.5 do CAMS.
+2. [`02_unzip_pm2p5_data.py`](02_unzip_pm2p5_data.py): script criado para automatizar a organização dos dados de PM2.5 baixados do CAMS. Ele descompacta os arquivos baixados.
+3. [`03_combine_pm2p5_data.py`](03_combine_pm2p5_data.py): Script que combina, organiza e padroniza os dados de PM2.5 descompactados. Como resultado teremos um único arquivo `NetCDF` com todos os dados, outros dois netCDFs com a média de PM2.5 para a temporada e a média mensal.
 4. [`04_extract_pm2p5_data.py`](04_extract_pm2p5_data.py) extrai os dados de PM2.5 mensais e de toda a temporada para cada teritório a ser considerado: município, setor censitário e terras indígenas, localidades indígenas, localidades quilombolas e favelas e comunidades urbanas, da Amazônia Legal.
-5. [`05_finding_communities`](05_finding_communities.py) Identifica, dos territórios analizados, aqueles 10% mais afetados.
+5. [`05_finding_communities`](05_finding_communities.py) Identifica, dos territórios analisados, aqueles 10% mais afetados.
