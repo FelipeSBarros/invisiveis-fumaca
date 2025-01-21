@@ -209,7 +209,6 @@ def combine_datasets():
     if not Path("./Data/Processed/monthly_mean_pm2p5.nc").exists():
         logging.warning("Calculating monthly mean.")
         monthly_mean = ds.groupby("Brasilia_reference_time.month").mean()
-        monthly_mean.to_netcdf("./Data/Processed/monthly_mean_pm2p5.nc")
         for month in monthly_mean["month"].values:
             subset = monthly_mean.sel(month=month)
             identify_critical_pixels(
@@ -217,9 +216,9 @@ def combine_datasets():
                 n_critical_pixels=20,
                 output_file=f"./Data/Processed/month_{month}_pm2p5_20_top_critical_pixels_mask",
             )
-
-        logging.warning("Exporting monthly mean to tif.")
         monthly_mean = monthly_mean.pm2p5.transpose("month", "latitude", "longitude")
+        monthly_mean.to_netcdf("./Data/Processed/monthly_mean_pm2p5.nc")
+        logging.warning("Exporting monthly mean to tif.")
         monthly_mean.rio.to_raster("./Data/Processed/monthly_mean_pm2p5.tif")
 
     # 24. Calculando a mediana para todo o periodo
