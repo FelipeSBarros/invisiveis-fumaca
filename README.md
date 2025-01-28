@@ -10,7 +10,7 @@ Neste repositório, você encontrará os scripts usados para baixar, processar e
 * [Metodologia](#metodologia)
 * [Resultados](#resultados)
 
-Caso queira conhecer a metodologia do projeto e, quem sabe, replicá-lo, os seguintes tópicos podem ajudar:
+Caso queira conhecer cada passo desenvolvido no projeto e, quem sabe, replicá-lo, veja os seguintes tópicos:
 
 * [Aquisição dos dados](#aquisição-dos-dados)
 * [Processamento dos dados](#processamento-dos-dados)
@@ -19,7 +19,7 @@ Caso queira conhecer a metodologia do projeto e, quem sabe, replicá-lo, os segu
 
 Os dados de particulado fino foram baixados para a Amazônia Legal. O mesmos precisaram ser organizados e tratados para que possamos trabalhar com as datas de Brasília (referência nacional), ainda que, na Amazônia, existam mais de uma zona horária.
 
-Com os dados baixados, usamos os setores censitários e de localidades (Indígenas, Quilombolas e Favelas e Comunidades Urbanas), chamados de "territórios", para extrair os valores de PM2.5 médio para cada território. Foram calculados os [valores médios de todo o período](https://drive.google.com/file/d/17T6hh3U5zUmzL49EIEkYljsI9x8XYh1m/view?usp=sharing) em estudo (Julho a Dezembro de 2024), assim como a [média de cada mês](https://drive.google.com/file/d/1Eis49U4TbHxHJMayzf90rhcYjU0GSEtE/view?usp=sharing);
+Com os dados baixados, usamos os setores censitários e de localidades (Indígenas, Quilombolas e Favelas e Comunidades Urbanas), chamados de "territórios" no presente projeto, para extrair os valores de PM2.5 médio para cada território. Foram calculados os [valores médios de todo o período](https://drive.google.com/file/d/17T6hh3U5zUmzL49EIEkYljsI9x8XYh1m/view?usp=sharing) em estudo (Julho a Dezembro de 2024), assim como a [média de cada mês](https://drive.google.com/file/d/1Eis49U4TbHxHJMayzf90rhcYjU0GSEtE/view?usp=sharing);
 
 Ao identificar os valores de PM2.5 aos quais os territórios de localidades foram expostas (em todo o período e a cada mês), selecionamos os 10% mais afetados, usando o [quantil](https://pt.wikipedia.org/wiki/Quantil) 90 dos valores observados. Caso tal valor tenha sido menor que o limite máximo recomendável de exposição diária pela Organização Mundial da Saúde[1], este último foi usado (i.e.: 15 µg/m³). O resultado foi apresentado como um mapa web (ver [resultados](#resultados)).
 
@@ -27,7 +27,7 @@ Para os dados de Setores Censitários, por se tratar de uma base de dados espaci
 
 Todos os dados, sejam eles apresentados em mapa web, sejam em planilha eletrônica, estão disponíveis no `geopackage` [results](https://drive.google.com/file/d/1sXPW0Boiud3v4RD0kCssE_gnqX3V8rRE/view?usp=sharing).
 
-[1]: World Health Organization. (‎2021)‎. WHO global air quality guidelines: particulate matter (‎PM2.5 and PM10)‎, ozone, nitrogen dioxide, sulfur dioxide and carbon monoxide. World Health Organization. https://iris.who.int/handle/10665/345329. License: CC BY-NC-SA 3.0 IGO
+[1]: World Health Organization. (2021). WHO global air quality guidelines: particulate matter (‎PM2.5 and PM10)‎, ozone, nitrogen dioxide, sulfur dioxide and carbon monoxide. World Health Organization. https://iris.who.int/handle/10665/345329. License: CC BY-NC-SA 3.0 IGO
 
 # Resultados
 
@@ -52,7 +52,7 @@ Os dados foram obtidos do Copernicus Atmosphere Monitoring Service (CAMS).
 Do conjunto de dados [_global atmospheric composition forecasts_](https://ads.atmosphere.copernicus.eu/datasets/cams-global-atmospheric-composition-forecasts) (veja mais informações na [documentação](https://confluence.ecmwf.int/display/CKB/CAMS%3A+Global+atmospheric+composition+forecast+data+documentation) ), foi baixada a variável _Particulate matter d < 2.5 µm (PM2.5)_ (`"cams-global-atmospheric-composition-forecasts"`), usando o script [`01_downloading_pm2p5_data.py`](01_downloading_pm2p5_data.py).
 Para poder usar a [API](https://ads.atmosphere.copernicus.eu/how-to-api), é necessário cadastrar-se e, estando logado, acessar a credencial de acesso pessoal, conforme indicado na documentação da API. 
 
-> ATENÇÃO: Para poder executar o script, é necessário ter a crdencial de acesso já configurada e a biblioteca Python `cdsapi` (>=0.7.2) instalada.
+> ATENÇÃO: Para poder executar o script, é necessário ter a credencial de acesso já configurada e a biblioteca Python `cdsapi` (>=0.7.2) instalada.
 
 * Caso esteja interessado em aprender a manipular tais dados, veja a lista de [tutoriais](https://ecmwf-projects.github.io/copernicus-training-cams/intro.html) deles.
 
@@ -62,7 +62,7 @@ Os dados de focos de calor foram baixados do [INPE](https://terrabrasilis.dpi.in
 
 ## Municípios e setores censitários 2022
 
-Os dados de [municípios](https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15819-amazonia-legal.html) e [setores censitários](https://www.ibge.gov.br/estatisticas/downloads-estatisticas.html) foram adquiridos do IBGE. Em abmso os casos, considerou-se apenas aqueles que fazem parte da Amazônia Legal.
+Os dados de [municípios](https://www.ibge.gov.br/geociencias/cartas-e-mapas/mapas-regionais/15819-amazonia-legal.html) e [setores censitários](https://www.ibge.gov.br/estatisticas/downloads-estatisticas.html) foram adquiridos do IBGE. Em ambos os casos, considerou-se apenas aqueles que fazem parte da Amazônia Legal.
 
 ### Dicionário da tabela de atributos dos setores censitários
 
@@ -236,4 +236,5 @@ Para cada fase de processamento dos dados, foi criado um script Python. A seguir
 3. [`03_combine_pm2p5_data.py`](03_combine_pm2p5_data.py): Script que combina, organiza e padroniza os dados de PM2.5 descompactados. Como resultado teremos um único arquivo `NetCDF` com todos os dados, outros dois netCDFs com a média de PM2.5 para a temporada e a média mensal.
 4. [`04_extract_pm2p5_data.py`](04_extract_pm2p5_data.py) extrai os dados de PM2.5 mensais e de toda a temporada para cada teritório a ser considerado: município, setor censitário e terras indígenas, localidades indígenas, localidades quilombolas e favelas e comunidades urbanas, da Amazônia Legal.
 5. [`05_finding_communities`](05_finding_communities.py) Identifica, dos territórios analisados, aqueles 10% mais afetados.
-5. [`06_export_excel`](06_export_excel.py) Exporta a tabela de atributo dos resultados a excel.
+6. [`06_export_excel`](06_export_excel.py) Exporta a tabela de atributo dos resultados a excel.
+7. [`07_create_images`](07_create_images.py) Cria e salva imagens com resultados gerais na pasta `figs`.
