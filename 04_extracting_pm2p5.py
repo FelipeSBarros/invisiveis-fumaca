@@ -6,6 +6,8 @@ from pathlib import Path
 import geopandas as gpd
 import xarray as xr
 
+from testes import focos
+
 # Carregando o dataset xarray com os dados médios de PM2.5 para toda a temporada
 season_mean = xr.open_dataset("./Data/Processed/season_mean_pm2p5.nc")
 
@@ -14,6 +16,12 @@ monthly_mean = xr.open_dataset("./Data/Processed/monthly_mean_pm2p5.nc")
 
 max_values = xr.open_dataset(
     "./Data/Processed/max_values_pm2p5.nc", decode_coords="all"
+)
+
+# Carregando dado de focos de calor
+focos = gpd.read_file(
+    "./Data/Raw/IBGE/Limites_Territoriais_AmazoniaLegal.gpkg",
+    layer="Focos_NPP375_tarde",
 )
 
 
@@ -37,12 +45,7 @@ def extract_values(gpkg_path, territory_layer_name, output_path, zonal_stats=Tru
         season_stats = season_mean.xvec.extract_points(
             territory.geometry, x_coords="longitude", y_coords="latitude"
         )
-        max_stats_val = max_values.max_value.xvec.extract_points(
-            territory.geometry,
-            x_coords="longitude",
-            y_coords="latitude",
-        )
-        max_stats_month = max_values.max_month.xvec.extract_points(
+        max_stats_val = max_values.xvec.extract_points(
             territory.geometry,
             x_coords="longitude",
             y_coords="latitude",
@@ -69,18 +72,49 @@ def extract_values(gpkg_path, territory_layer_name, output_path, zonal_stats=Tru
             y_coords="latitude",
             method="exactextract",
         )
-        max_stats_val = max_values.max_value.xvec.zonal_stats(
+        max_stats_val = max_values.xvec.zonal_stats(
             territory.geometry,
             x_coords="longitude",
             y_coords="latitude",
+            stats=["max"],
             method="exactextract",
         )
-        max_stats_month = max_values.max_month.xvec.zonal_stats(
-            territory.geometry,
-            x_coords="longitude",
-            y_coords="latitude",
-            method="exactextract",
+
+        # Perform spatial join to find points within polygons
+        joined = gpd.sjoin(focos, territory, predicate="within")
+        total_focos = (
+            joined.groupby(["index_right"])
+            .size()
+            .to_frame("total_focos")
+            .reset_index(drop=True)
         )
+        territory = territory.merge(
+            total_focos, left_index=True, right_index=True, how="left"
+        )
+        # Count points within each polygon using the polygon's unique ID
+        point_counts = (
+            joined.groupby(["index_right", "mes"])
+            .size()
+            .to_frame("total_mes")
+            .reset_index(drop=False)
+        )
+        # convert DataFrame to wide format setting mes as columns and total_mes as values
+        point_counts = point_counts.pivot(
+            index="index_right", columns="mes", values="total_mes"
+        )
+        point_counts = point_counts.rename(
+            columns={
+                col: f"focos_mes_{col}"
+                for col in point_counts.columns
+                if 7 <= col <= 12
+            },
+        )
+
+        # join the joined DataFrame with point_counts by the index_right column
+        territory = territory.merge(
+            point_counts, left_index=True, right_index=True, how="left"
+        )
+        # territory.to_file("Data/Processed/results.gpkg", layer="GPKG")
 
     # Convertendo os resultados das estatísticas zonais para um GeoDataFrame
     logging.warning(
@@ -88,24 +122,27 @@ def extract_values(gpkg_path, territory_layer_name, output_path, zonal_stats=Tru
     )
     monthly_stats_df = monthly_stats.xvec.to_geodataframe(name="pm2p5").reset_index()
     season_stats_df = season_stats.xvec.to_geodataframe(name="pm2p5").reset_index()
-    max_stats_df = max_stats_val.xvec.to_geodataframe(name="pm2p5").reset_index()
-    max_stats_month_df = max_stats_month.xvec.to_geodataframe(
-        name="pm2p5"
-    ).reset_index()
+    max_stats_df = max_stats_val.xvec.to_geodataframe(name="vallue").reset_index()
 
     # Adicionando um ID único para cada município por mês
     monthly_stats_df["id"] = monthly_stats_df.groupby("month").cumcount()
 
     # Removendo a coluna de geometria, já que não será usada na transformação para formato "wide"
     monthly_stats_df = monthly_stats_df.drop(columns=["geometry"])
-    season_stats_df = season_stats_df.drop(columns=["geometry"])
-    max_stats_df = max_stats_df.pm2p5.to_frame("max_pm2p5")
-    max_stats_month_df = max_stats_month_df.pm2p5.to_frame("max_month")
-
     # Transformando o DataFrame para formato "wide" (colunas por mês)
     monthly_stats_df = monthly_stats_df.pivot(
         columns="month", index="id", values="pm2p5"
     )
+    season_stats_df = season_stats_df.drop(columns=["geometry"])
+    # Pivot para reorganizar os dados em formato wide
+    if not "max_month" in list(max_stats_df.columns):
+        max_stats_df = max_stats_df.pivot_table(
+            index=max_stats_df.groupby("variable").cumcount(),
+            columns="variable",
+            values="value",
+            aggfunc="first",
+        )
+
     season_stats_df = season_stats_df.pivot(columns="year", values="pm2p5")
     season_stats_df.columns = ["media_temporada"]
 
@@ -122,8 +159,7 @@ def extract_values(gpkg_path, territory_layer_name, output_path, zonal_stats=Tru
     # Fazendo o join com o limite territorial
     logging.warning(f"Joining results with {territory_layer_name} boundaries.")
     monthly_gdf = territory.join(monthly_stats_df, how="inner")
-    monthly_gdf = monthly_gdf.join(max_stats_df, how="inner")
-    monthly_gdf = monthly_gdf.join(max_stats_month_df, how="inner")
+    monthly_gdf = monthly_gdf.join(max_stats_df[["max_value", "max_month"]], how="inner")
     final_gdf = monthly_gdf.join(season_stats_df, how="inner")
 
     # Salvando o GeoDataFrame em um arquivo GeoPackage
