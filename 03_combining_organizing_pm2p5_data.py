@@ -6,7 +6,6 @@ import logging  # Para registrar logs de execução
 from pathlib import Path  # Para manipulação de caminhos de arquivos
 import geopandas as gpd
 import rioxarray
-from geocube.vector import vectorize
 
 
 def identify_critical_pixels(
@@ -258,8 +257,36 @@ def combine_datasets():
     if not Path("./Data/Processed/max_pm2p5.tif").exists():
         logging.warning("Calculating max pm2p5.")
         daily_mean = ds.groupby("Brasilia_reference_time.date").mean()
+
+        # Identificar o valor máximo de pm2p5 ao longo do tempo
         max_daily_pm2p5 = daily_mean.pm2p5.max(dim="date")
-        # max_pm2p5.to_netcdf("./Data/Processed/max_pm2p5.nc")
+
+        # Identificar a data correspondente ao valor máximo diário
+        max_dates = daily_mean.pm2p5.idxmax(dim="date")
+        flattened_dates = np.array(max_dates.values).ravel()
+        # Remove NaTs ou valores inválidos, se existirem
+        valid_dates = flattened_dates[~pd.isnull(flattened_dates)]
+        # Converter os valores para datetime64 para garantir compatibilidade
+        dates_as_datetime = pd.to_datetime(valid_dates)
+        # Obter os meses correspondentes como inteiros
+        months_flattened = np.array([date.month for date in dates_as_datetime]) # months_flattened = np.array([int(date.strftime("%Y%m%d%H%M%S")) for date in dates_as_datetime])
+        # Criar um array preenchido com NaNs e depois inserir os valores válidos
+        months_full = np.full(flattened_dates.shape, np.nan)
+        months_full[~pd.isnull(flattened_dates)] = months_flattened
+        # Reformar os meses para o formato original de max_dates
+        months = xr.DataArray(
+            months_full.reshape(max_dates.values.shape),  # Reformar para o formato original
+            coords=max_dates.coords,  # Mesmas coordenadas que max_dates
+            dims=max_dates.dims  # Mesmas dimensões que max_dates
+        )
+        # Adicionar os meses ao Dataset original
+        max_values = xr.Dataset(
+            {
+                "max_value": max_daily_pm2p5,
+                "max_month": months
+            }
+        ).transpose("latitude", "longitude")
+        max_values.to_netcdf("./Data/Processed/max_values_pm2p5.nc")
         logging.warning("Exporting max pm2p5 to tif.")
         max_daily_pm2p5 = max_daily_pm2p5.transpose("latitude", "longitude")
         max_daily_pm2p5.rio.to_raster("./Data/Processed/max_pm2p5.tif")
