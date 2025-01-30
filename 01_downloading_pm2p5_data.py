@@ -1,13 +1,14 @@
 # Importação das bibliotecas necessárias
-import cdsapi  # Cliente para acessar os dados do Copernicus
-from datetime import date  # Para manipulação de datas
-import time as t  # Para controlar os intervalos de tempo entre as requisições
 import calendar  # Para obter o último dia de cada mês
+import logging  # Para registrar logs de execução
+import time as t  # Para controlar os intervalos de tempo entre as requisições
+from datetime import date  # Para manipulação de datas
+from pathlib import Path  # Para trabalhar com caminhos de arquivos
+
+import cdsapi  # Cliente para acessar os dados do Copernicus
 from dateutil.relativedelta import (
     relativedelta,
 )  # Para manipulação de datas (como avançar meses)
-from pathlib import Path  # Para trabalhar com caminhos de arquivos
-import logging  # Para registrar logs de execução
 
 # Inicialização do cliente do Copernicus
 # importante, ver README para saber mais sobre credenciais de acesso # todo adicionar instruções no README

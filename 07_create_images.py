@@ -1,7 +1,8 @@
-import matplotlib.pyplot as plt
-import geopandas as gpd
-import xarray as xr
 import logging
+
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import xarray as xr
 
 
 def create_figs():

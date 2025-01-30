@@ -1,8 +1,8 @@
 # Importando bibliotecas necessárias
+import logging
+import xvec
 from pathlib import Path
 
-import xvec
-import logging
 import geopandas as gpd
 import xarray as xr
 
@@ -12,7 +12,10 @@ season_mean = xr.open_dataset("./Data/Processed/season_mean_pm2p5.nc")
 # Carregando o dataset xarray com os dados médios mensais de PM2.5
 monthly_mean = xr.open_dataset("./Data/Processed/monthly_mean_pm2p5.nc")
 
-max_values = xr.open_dataset("./Data/Processed/max_values_pm2p5.nc", decode_coords="all")
+max_values = xr.open_dataset(
+    "./Data/Processed/max_values_pm2p5.nc", decode_coords="all"
+)
+
 
 def extract_values(gpkg_path, territory_layer_name, output_path, zonal_stats=True):
     if not Path(gpkg_path).exists():
@@ -35,10 +38,14 @@ def extract_values(gpkg_path, territory_layer_name, output_path, zonal_stats=Tru
             territory.geometry, x_coords="longitude", y_coords="latitude"
         )
         max_stats_val = max_values.max_value.xvec.extract_points(
-            territory.geometry, x_coords="longitude", y_coords="latitude",
+            territory.geometry,
+            x_coords="longitude",
+            y_coords="latitude",
         )
         max_stats_month = max_values.max_month.xvec.extract_points(
-            territory.geometry, x_coords="longitude", y_coords="latitude",
+            territory.geometry,
+            x_coords="longitude",
+            y_coords="latitude",
         )
 
     if zonal_stats:
@@ -63,10 +70,16 @@ def extract_values(gpkg_path, territory_layer_name, output_path, zonal_stats=Tru
             method="exactextract",
         )
         max_stats_val = max_values.max_value.xvec.zonal_stats(
-            territory.geometry, x_coords="longitude", y_coords="latitude", method="exactextract",
+            territory.geometry,
+            x_coords="longitude",
+            y_coords="latitude",
+            method="exactextract",
         )
         max_stats_month = max_values.max_month.xvec.zonal_stats(
-            territory.geometry, x_coords="longitude", y_coords="latitude", method="exactextract",
+            territory.geometry,
+            x_coords="longitude",
+            y_coords="latitude",
+            method="exactextract",
         )
 
     # Convertendo os resultados das estatísticas zonais para um GeoDataFrame
@@ -76,7 +89,9 @@ def extract_values(gpkg_path, territory_layer_name, output_path, zonal_stats=Tru
     monthly_stats_df = monthly_stats.xvec.to_geodataframe(name="pm2p5").reset_index()
     season_stats_df = season_stats.xvec.to_geodataframe(name="pm2p5").reset_index()
     max_stats_df = max_stats_val.xvec.to_geodataframe(name="pm2p5").reset_index()
-    max_stats_month_df = max_stats_month.xvec.to_geodataframe(name="pm2p5").reset_index()
+    max_stats_month_df = max_stats_month.xvec.to_geodataframe(
+        name="pm2p5"
+    ).reset_index()
 
     # Adicionando um ID único para cada município por mês
     monthly_stats_df["id"] = monthly_stats_df.groupby("month").cumcount()

@@ -1,11 +1,12 @@
-import xarray as xr  # Importa o xarray para trabalhar com datasets multidimensionais
-from glob import glob  # Importa glob para buscar arquivos no sistema
-import pandas as pd  # Importa pandas para manipulação de datas e tempos
-import numpy as np  # Importa numpy para operações numéricas
 import logging  # Para registrar logs de execução
+import rioxarray # para trabalhar com xarray e rasterio
+from glob import glob  # Importa glob para buscar arquivos no sistema
 from pathlib import Path  # Para manipulação de caminhos de arquivos
+
 import geopandas as gpd
-import rioxarray
+import numpy as np  # Importa numpy para operações numéricas
+import pandas as pd  # Importa pandas para manipulação de datas e tempos
+import xarray as xr  # Importa o xarray para trabalhar com datasets multidimensionais
 
 
 def identify_critical_pixels(
@@ -269,22 +270,23 @@ def combine_datasets():
         # Converter os valores para datetime64 para garantir compatibilidade
         dates_as_datetime = pd.to_datetime(valid_dates)
         # Obter os meses correspondentes como inteiros
-        months_flattened = np.array([date.month for date in dates_as_datetime]) # months_flattened = np.array([int(date.strftime("%Y%m%d%H%M%S")) for date in dates_as_datetime])
+        months_flattened = np.array(
+            [date.month for date in dates_as_datetime]
+        )  # months_flattened = np.array([int(date.strftime("%Y%m%d%H%M%S")) for date in dates_as_datetime])
         # Criar um array preenchido com NaNs e depois inserir os valores válidos
         months_full = np.full(flattened_dates.shape, np.nan)
         months_full[~pd.isnull(flattened_dates)] = months_flattened
         # Reformar os meses para o formato original de max_dates
         months = xr.DataArray(
-            months_full.reshape(max_dates.values.shape),  # Reformar para o formato original
+            months_full.reshape(
+                max_dates.values.shape
+            ),  # Reformar para o formato original
             coords=max_dates.coords,  # Mesmas coordenadas que max_dates
-            dims=max_dates.dims  # Mesmas dimensões que max_dates
+            dims=max_dates.dims,  # Mesmas dimensões que max_dates
         )
         # Adicionar os meses ao Dataset original
         max_values = xr.Dataset(
-            {
-                "max_value": max_daily_pm2p5,
-                "max_month": months
-            }
+            {"max_value": max_daily_pm2p5, "max_month": months}
         ).transpose("latitude", "longitude")
         max_values.to_netcdf("./Data/Processed/max_values_pm2p5.nc")
         logging.warning("Exporting max pm2p5 to tif.")

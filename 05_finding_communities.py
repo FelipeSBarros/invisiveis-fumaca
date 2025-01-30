@@ -1,5 +1,6 @@
-import geopandas as gpd
 import logging
+
+import geopandas as gpd
 
 
 def filter_q90(

@@ -1,10 +1,10 @@
 # Importação das bibliotecas necessárias
 import glob  # Para localizar arquivos com padrões específicos de nome
+import logging  # Para registrar logs de execução
 import os  # Para manipulação de arquivos e diretórios
 import zipfile  # Para descompactar arquivos zip
 from datetime import datetime  # Para trabalhar com datas
 from pathlib import Path  # Para manipulação de caminhos de arquivos
-import logging  # Para registrar logs de execução
 
 # Para manipulação de datas de forma avançada, como adicionar meses
 from dateutil.relativedelta import relativedelta
