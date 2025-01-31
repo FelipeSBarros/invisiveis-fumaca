@@ -41,3 +41,6 @@ if __name__ == "__main__":
     )
     setores.drop("geometry", axis=1, inplace=True)
     setores.to_excel(f"./Data/Processed/resultado_setores.xlsx")
+    tis = gpd.read_file("./Data/Processed/results.gpkg", layer="TerrasIndigenas_2022_pm2p5")
+    tis.drop("geometry", axis=1, inplace=True)
+    tis.to_excel(f"./Data/Processed/resultado_tis.xlsx")
