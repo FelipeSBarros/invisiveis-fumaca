@@ -86,7 +86,6 @@ def extract_values(gpkg_path, territory_layer_name, output_path, zonal_stats=Tru
             joined.groupby(["index_right"])
             .size()
             .to_frame("total_focos")
-            .reset_index(drop=True)
         )
         territory = territory.merge(
             total_focos, left_index=True, right_index=True, how="left"
@@ -109,7 +108,7 @@ def extract_values(gpkg_path, territory_layer_name, output_path, zonal_stats=Tru
                 if 7 <= col <= 12
             },
         )
-        point_counts.reset_index(drop=True, inplace=True)
+        # point_counts.reset_index(drop=True, inplace=True)
         # join the joined DataFrame with point_counts by the index_right column
         territory = territory.merge(
             point_counts, left_index=True, right_index=True, how="left"
